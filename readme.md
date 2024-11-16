@@ -12,7 +12,7 @@ to add this overlay to your system, use `eselect-repository` (recommended):
 eselect repository add norayr-overlay git https://github.com/norayr/norayr-overlay.git
 ```
 
-Alternatively, you can add it manually to `/etc/portage/repos.conf`
+Alternatively, you can add it manually to `/etc/portage/repos.conf` directory as `norayr-overlay.conf`:
 
 ```
 [norayr-overlay]
