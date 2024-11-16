@@ -10,6 +10,8 @@ to add this overlay to your system, use `eselect-repository` (recommended):
 
 ```bash
 eselect repository add norayr-overlay git https://github.com/norayr/norayr-overlay.git
+mkdir -p /var/db/repos/norayr-overlay
+emerge --sync norayr-overlay
 ```
 
 Alternatively, you can add it manually to `/etc/portage/repos.conf` directory as `norayr-overlay.conf`:
