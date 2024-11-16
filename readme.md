@@ -1,4 +1,4 @@
-# norayr's genttoo overlay
+# norayr's gentoo overlay
 
 this gentoo overlay contains ebuilds to build
 
