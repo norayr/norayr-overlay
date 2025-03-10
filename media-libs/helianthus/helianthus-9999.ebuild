@@ -16,7 +16,7 @@ KEYWORDS=""
 IUSE=""
 
 # Build-time dependencies
-BDEPEND="dev-util/scons
+BDEPEND="dev-build/scons
          virtual/pkgconfig
          sys-devel/gcc"
 # Build & run-time dependencies
