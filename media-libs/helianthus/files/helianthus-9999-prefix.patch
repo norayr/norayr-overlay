@@ -1,0 +1,13 @@
+--- a/src/SConstruct
++++ b/src/SConstruct
+@@
++import os
+ env = Environment(tools = ['default', 'textfile'])
+@@
+ opts.Update(env)
++destdir = os.environ.get('DESTDIR', '')
++if destdir:
++    # Install into DESTDIR + PREFIX to support Gentoo image directory
++    env['PREFIX'] = destdir + env['PREFIX']
+ opts.Save(name + '.conf', env)
+

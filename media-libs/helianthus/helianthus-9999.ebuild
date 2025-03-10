@@ -17,20 +17,22 @@ IUSE=""
 
 # Build-time dependencies
 BDEPEND="dev-build/scons
-         virtual/pkgconfig
-         sys-devel/gcc"
+    virtual/pkgconfig
+    sys-devel/gcc"
 # Build & run-time dependencies
 DEPEND="media-libs/libsdl2
-        media-libs/sdl2-mixer
-        media-libs/sdl2-image
-        media-libs/freetype:2"
+    media-libs/sdl2-mixer
+    media-libs/sdl2-image
+    media-libs/freetype:2"
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-    # Adjust installation paths for Gentoo (use lib64 on 64-bit systems)
-    sed -i -e "/idir_lib/s:\$PREFIX/lib:\$PREFIX/$(get_libdir):" src/SConstruct || die
-    sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
-    default  # Apply any user patches if present
+  eapply "${FILESDIR}/helianthus-9999-prefix.patch"  # Apply our SConstruct prefix fix
+  eapply_user  # Apply any user-supplied patches (EAPI ≥6)&#8203;:contentReference[oaicite:6]{index=6}
+  # Adjust installation paths for Gentoo (use lib64 on 64-bit systems)
+  sed -i -e "/idir_lib/s:\$PREFIX/lib:\$PREFIX/$(get_libdir):" src/SConstruct || die
+  sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
+  default  # Apply any user patches if present
 }
 
 src_configure() {
