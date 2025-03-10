@@ -1,13 +1,20 @@
+diff --git a/src/SConstruct b/src/SConstruct
+index 5f64b6c..af7fa06 100644
 --- a/src/SConstruct
 +++ b/src/SConstruct
-@@
+@@ -1,4 +1,4 @@
+-
 +import os
  env = Environment(tools = ['default', 'textfile'])
-@@
- opts.Update(env)
-+destdir = os.environ.get('DESTDIR', '')
-+if destdir:
-+    # Install into DESTDIR + PREFIX to support Gentoo image directory
-+    env['PREFIX'] = destdir + env['PREFIX']
- opts.Save(name + '.conf', env)
 
+ name = 'helianthus'
+@@ -12,7 +12,9 @@ DEBUG = ARGUMENTS.get('DEBUG', 0)
+ WITH_FULL_UNICODE_FONT = ARGUMENTS.get('WITH_FULL_UNICODE_FONT', 0)
+
+ opts = Variables(name + '.conf')
+-opts.Add(PathVariable('PREFIX', 'Directory to install under', '/usr/local', PathVariable.PathAccept))
++destdir = os.environ.get('DESTDIR', '')
++opts.Add(PathVariable('PREFIX', 'Directory to install under', '/usr', PathVariable.PathAccept))
++env['PREFIX'] = destdir + env['PREFIX'] if destdir else env['PREFIX']
+ opts.Update(env)
+ opts.Save(name + '.conf', env)
