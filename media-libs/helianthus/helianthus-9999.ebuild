@@ -27,12 +27,12 @@ DEPEND="media-libs/libsdl2
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-  eapply "${FILESDIR}/helianthus-9999-prefix.patch"  # Apply our SConstruct prefix fix
-  eapply_user  # Apply any user-supplied patches (EAPI ≥6)&#8203;:contentReference[oaicite:6]{index=6}
-  # Adjust installation paths for Gentoo (use lib64 on 64-bit systems)
-  sed -i -e "/idir_lib/s:\$PREFIX/lib:\$PREFIX/$(get_libdir):" src/SConstruct || die
-  sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
-  default  # Apply any user patches if present
+	# Adjust installation paths for Gentoo (use lib64 on 64-bit systems)
+	sed -i -e "/idir_lib/s:\$PREFIX/lib:\$PREFIX/$(get_libdir):" src/SConstruct || die
+	sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
+	eapply "${FILESDIR}/helianthus-9999-prefix.patch"
+	eapply_user
+	default  # Apply any user patches if present
 }
 
 src_configure() {
