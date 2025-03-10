@@ -1,24 +1,41 @@
-diff --git a/src/SConstruct b/src/SConstruct
-index 5f64b6c..d539816 100644
---- a/src/SConstruct
-+++ b/src/SConstruct
-@@ -1,4 +1,4 @@
--
+--- a/SConstruct
++++ b/SConstruct
+@@ -1,3 +1,4 @@
 +import os
  env = Environment(tools = ['default', 'textfile'])
- 
  name = 'helianthus'
-@@ -12,8 +12,12 @@ DEBUG = ARGUMENTS.get('DEBUG', 0)
- WITH_FULL_UNICODE_FONT = ARGUMENTS.get('WITH_FULL_UNICODE_FONT', 0)
- 
+ description = 'Helianthus is a library to create small games'
+@@ -5,7 +6,7 @@
+ # user options
+ DEBUG = ARGUMENTS.get('DEBUG', 0)
  opts = Variables(name + '.conf')
 -opts.Add(PathVariable('PREFIX', 'Directory to install under', '/usr/local', PathVariable.PathAccept))
-+opts.Add(PathVariable('PREFIX', 'Directory to install under', '/usr', PathVariable.PathAccept))
++opts.Add(PathVariable('PREFIX', 'Directory to install under', os.environ.get('EPREFIX', '') + '/usr', PathVariable.PathAccept))
  opts.Update(env)
-+destdir = os.environ.get('DESTDIR', '')
-+if destdir:
-+	# Install into DESTDIR + PREFIX to support Gentoo image directory
-+	env['PREFIX'] = destdir + env['PREFIX']
  opts.Save(name + '.conf', env)
- 
- 
+ # config
+@@ -50,15 +51,18 @@
+     parse_flags = flags,
+     SHLIBVERSION = version )
+ # install
+-idir_prefix = '$PREFIX'
+-idir_lib    = '$PREFIX/lib'
+-idir_inc    = '$PREFIX/include'
++destdir = os.environ.get('DESTDIR', '')
++destdir = destdir.rstrip(os.sep)
++env['DESTDIR'] = destdir
++idir_prefix = '${DESTDIR}${PREFIX}'
++idir_lib    = '${DESTDIR}${PREFIX}/lib'
++idir_inc    = '${DESTDIR}${PREFIX}/include'
+ env.Export('env idir_prefix idir_lib idir_inc')
+ pcdict = {
+-    '@prefix@'        : idir_prefix,
++    '@prefix@'        : '$PREFIX',
+     '@exec_prefix@'   : '$${prefix}',
+-    '@libdir@'        : ('$${exec_prefix}/lib' if idir_lib == '$PREFIX/lib' else idir_lib),
+-    '@includedir@'    : ('$${prefix}/include' if idir_inc == '$PREFIX/include' else idir_inc) + '/' + name,
++    '@libdir@'        : '$${exec_prefix}/lib',
++    '@includedir@'    : '$${prefix}/include/' + name,
+     '@NAME@'          : name,
+     '@DESC@'          : description,
+     '@VERSION@'       : version,
