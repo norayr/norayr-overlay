@@ -1,5 +1,6 @@
---- a/src/SConstruct
-+++ b/src/SConstruct
+diff '--color=auto' -ur a/src/SConstruct b/src/SConstruct
+--- a/src/SConstruct	2025-03-10 20:59:46.400114320 +0400
++++ b/src/SConstruct	2025-03-10 20:47:43.367319536 +0400
 @@ -1,4 +1,4 @@
 -
 +import os
