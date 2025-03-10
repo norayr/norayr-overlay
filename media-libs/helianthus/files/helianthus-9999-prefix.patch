@@ -1,5 +1,5 @@
---- src/SConstruct.orig	2025-03-10 20:24:34.268767289 +0400
-+++ src/SConstruct	2025-03-10 20:47:43.367319536 +0400
+--- a/src/SConstruct
++++ b/src/SConstruct
 @@ -1,4 +1,4 @@
 -
 +import os
