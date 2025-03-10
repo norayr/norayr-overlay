@@ -1,16 +1,7 @@
 diff -ur a/src/SConstruct b/src/SConstruct
 --- a/src/SConstruct	2025-03-10 20:59:46.400114320 +0400
 +++ b/src/SConstruct	2025-03-10 20:47:43.367319536 +0400
-@@ -1,5 +1,5 @@
--
-+import os
- env = Environment(tools = ['default', 'textfile'])
- 
- name = 'helianthus'
- description = 'Helianthus is a library to create small games'
- version = '0.1.0'
-@@ -11,7 +11,12 @@
- DEBUG = ARGUMENTS.get('DEBUG', 0)
+@@ -12,7 +12,12 @@
  WITH_FULL_UNICODE_FONT = ARGUMENTS.get('WITH_FULL_UNICODE_FONT', 0)
  
  opts = Variables(name + '.conf')
