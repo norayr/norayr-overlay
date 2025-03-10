@@ -32,7 +32,6 @@ src_prepare() {
 	sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
 	eapply "${FILESDIR}/helianthus-9999-prefix.patch"
 	eapply_user
-	default  # Apply any user patches if present
 }
 
 src_configure() {
