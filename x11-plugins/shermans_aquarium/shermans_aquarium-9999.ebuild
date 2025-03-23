@@ -12,32 +12,31 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE=""
 
 DEPEND="
-	dev-libs/gai
-	x11-libs/libX11
-	x11-libs/libXpm
-	x11-libs/libXt
-	x11-libs/libXext"
+    dev-libs/gai[sdl]
+    x11-libs/libX11
+    x11-libs/libXpm
+    x11-libs/libXt
+    x11-libs/libXext
+    dev-libs/glib:2
+    x11-libs/gtk+:2"
 RDEPEND="${DEPEND}"
 BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
-	default
-	eautoreconf
+    default
+    eautoreconf
 }
 
 src_configure() {
-	econf --with-gai
+    econf --with-gai
 }
 
 src_compile() {
-	default
-	# ensure shermans_applet gets built
-	emake -C shermans
+    default
+    emake -C shermans
 }
 
 src_install() {
-	default
-	# manually install shermans_applet binary
-	dobin shermans/shermans_applet
+    default
+    dobin shermans/shermans_applet
 }
-
