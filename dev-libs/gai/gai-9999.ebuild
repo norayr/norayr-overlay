@@ -12,22 +12,23 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE=""
 
 DEPEND="x11-libs/libX11
-	x11-libs/libXpm
-	x11-libs/libXt
-	x11-libs/libXext"
+  x11-libs/libXpm
+  x11-libs/libXt
+  x11-libs/libXext"
 RDEPEND="${DEPEND}"
 BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
-	default
-	eautoreconf
+  default
+  eautoreconf
 }
 
 src_configure() {
-	econf
+  append-cflags "-Wno-int-to-pointer-cast -Wno-int-conversion"
+  econf
 }
 
 src_install() {
-	default
+  default
 }
 
