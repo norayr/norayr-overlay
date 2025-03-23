@@ -1,9 +1,18 @@
---- a/libsylph/utils.c
-+++ b/libsylph/utils.c
-@@ -4263,7 +4263,7 @@
- 	if (!is_file_exec(argv[0]))
- 		g_warning("'%s' is not executable", argv[0]);
- 	else
--		execute_async(argv);
-+		execute_async((gchar * const *)argv);
- }
+--- libsylph/utils.c.orig	2025-03-24 01:59:40.330746773 +0400
++++ libsylph/utils.c	2025-03-24 02:07:05.200756207 +0400
+@@ -4256,13 +4256,13 @@
+ 	argv[1] = file;
+ 	execute_async(argv);
+ #else
+-	const gchar *argv[3] = {"xdg-open", NULL, NULL};
++	gchar *argv[3] = {"xdg-open", NULL, NULL};
+ 
+ 	g_return_val_if_fail(file != NULL, -1);
+ 
+ 	log_print("opening %s - %s\n", file, content_type ? content_type : "");
+ 
+-	argv[1] = file;
++	argv[1] = (gchar *)file;
+ 	execute_async(argv);
+ #endif
+ 
