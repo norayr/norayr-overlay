@@ -33,8 +33,7 @@ src_compile() {
 
 src_install() {
   dobin src/wmlaptop
-  doman man/wmlaptop.1
-  dodoc README INSTALL CHANGELOG
+  dodoc README README.IT INSTALL CHANGELOG BUGS AUTHORS THANKS LICENSE
 }
 
 pkg_postinst() {
