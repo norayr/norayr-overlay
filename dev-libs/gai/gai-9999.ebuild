@@ -24,7 +24,6 @@ src_prepare() {
 }
 
 src_configure() {
-  append-cflags "-Wno-int-to-pointer-cast -Wno-int-conversion"
   econf
 }
 
