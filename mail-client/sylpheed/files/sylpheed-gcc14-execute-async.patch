@@ -1,5 +1,5 @@
---- a/src/utils.c
-+++ b/src/utils.c
+--- a/libsylph/utils.c
++++ b/libsylph/utils.c
 @@ -4263,7 +4263,8 @@
         if (!is_file_exec(argv[0]))
                 g_warning("'%s' is not executable", argv[0]);
