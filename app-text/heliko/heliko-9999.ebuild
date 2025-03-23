@@ -19,26 +19,26 @@ RDEPEND="${DEPEND}"
 LAZARUS_PATH="/usr/share/lazarus"
 
 src_compile() {
-	local ARCH=$(uname -m)-linux
-	local TMPDIR="${T}/units"
+  local ARCH=$(uname -m)-linux
+  local TMPDIR="${T}/units"
 
-	mkdir -p "${TMPDIR}" || die "Failed to create unit output dir"
+  mkdir -p "${TMPDIR}" || die "Failed to create unit output dir"
 
-	fpc project1.lpr \
-		-FU"${TMPDIR}" \
-		-MObjFPC -Scgi -O1 -gl -vewnhi -l -Xs -Xg \
-		-Fu"${LAZARUS_PATH}/components/lazutils" \
-		-Fu"${LAZARUS_PATH}/components/synedit" \
-		-Fu"${LAZARUS_PATH}/components/synedit/units/${ARCH}" \
-		-Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/" \
-		-Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/gtk2/" \
-		-Fu"${LAZARUS_PATH}/packager/units/${ARCH}/" \
-		-Fu. -oheliko \
-		-dLCL -dLCLgtk2 || die "fpc build failed"
+  fpc project1.lpr \
+    -FU"${TMPDIR}" \
+    -MObjFPC -Scgi -O1 -gl -vewnhi -l -Xs -Xg \
+    -Fu"${LAZARUS_PATH}/components/lazutils" \
+    -Fu"${LAZARUS_PATH}/components/synedit" \
+    -Fu"${LAZARUS_PATH}/components/synedit/units/${ARCH}" \
+    -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/" \
+    -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/gtk2/" \
+    -Fu"${LAZARUS_PATH}/packager/units/${ARCH}/" \
+    -Fu. -oheliko \
+    -dLCL -dLCLgtk2 || die "fpc build failed"
 }
 
 
 src_install() {
   dobin heliko
-  dodoc README* LICENSE*
+  dodoc readme.md* LICENSE heliko.txt
 }
