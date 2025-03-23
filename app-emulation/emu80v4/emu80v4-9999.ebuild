@@ -49,12 +49,23 @@ src_compile() {
 }
 
 src_install() {
-	if use qt; then
-		cd src || die
-		dobin Emu80qt
-	elif use sdl; then
-		emake -f Makefile.sdlwx DESTDIR="${D}" install
-	elif use lite; then
-		emake -f Makefile.lite DESTDIR="${D}" install
-	fi
+    if use qt; then
+        cd src || die
+        dobin Emu80qt
+    elif use sdl; then
+        emake -f Makefile.sdlwx
+        dobin Emu80sdlwx
+        insinto /usr/share/emu80
+        doins -r dist/*
+    elif use lite; then
+        emake -f Makefile.lite
+        dobin Emu80lite
+        insinto /usr/share/emu80
+        doins -r dist/*
+        newdoc COPYING.txt COPYING
+        dodoc whatsnew.txt doc/*
+        echo "emulation.runPlatform = apogey" > emu80.run
+        insinto /usr/share/emu80
+        doins emu80.run
+    fi
 }
