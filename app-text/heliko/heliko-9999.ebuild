@@ -28,12 +28,15 @@ src_compile() {
 		-FU"${TMPDIR}" \
 		-MObjFPC -Scgi -O1 -gl -vewnhi -l -Xs -Xg \
 		-Fu"${LAZARUS_PATH}/components/lazutils" \
+		-Fu"${LAZARUS_PATH}/components/synedit" \
+		-Fu"${LAZARUS_PATH}/components/synedit/units/${ARCH}" \
 		-Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/" \
 		-Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/gtk2/" \
 		-Fu"${LAZARUS_PATH}/packager/units/${ARCH}/" \
 		-Fu. -oheliko \
 		-dLCL -dLCLgtk2 || die "fpc build failed"
 }
+
 
 src_install() {
   dobin heliko
