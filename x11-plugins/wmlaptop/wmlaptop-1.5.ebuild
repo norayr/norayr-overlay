@@ -32,7 +32,7 @@ src_compile() {
 }
 
 src_install() {
-  dobin wmlaptop
+  dobin src/wmlaptop
   doman man/wmlaptop.1
   dodoc README INSTALL CHANGELOG
 }
