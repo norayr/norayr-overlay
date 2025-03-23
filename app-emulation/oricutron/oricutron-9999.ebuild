@@ -26,7 +26,7 @@ DEPEND="${RDEPEND}"
 
 BDEPEND="
   virtual/pkgconfig
-  dev-util/ninja
+  dev-build/ninja
 "
 
 src_configure() {
