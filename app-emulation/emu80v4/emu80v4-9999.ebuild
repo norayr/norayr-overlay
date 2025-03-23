@@ -54,18 +54,18 @@ src_install() {
         dobin Emu80qt
     elif use sdl; then
         emake -f Makefile.sdlwx
-        dobin Emu80sdlwx
-        insinto /usr/share/emu80
-        doins -r dist/*
+        dobin Emu80
     elif use lite; then
         emake -f Makefile.lite
         dobin Emu80lite
-        insinto /usr/share/emu80
-        doins -r dist/*
-        newdoc COPYING.txt COPYING
-        dodoc whatsnew.txt doc/*
-        echo "emulation.runPlatform = apogey" > emu80.run
-        insinto /usr/share/emu80
-        doins emu80.run
     fi
+
+    insinto /usr/share/emu80
+    doins -r dist/*
+
+    echo "emulation.runPlatform = apogey" > "${T}/emu80.run"
+    doins "${T}/emu80.run"
+
+    dodoc COPYING.txt whatsnew.txt
+    dodoc doc/*
 }
