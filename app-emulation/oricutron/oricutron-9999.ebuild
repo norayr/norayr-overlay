@@ -38,11 +38,12 @@ src_configure() {
 }
 
 src_install() {
-  if use sdl2; then
-    dobin Oricutron-sdl2
-  else
-    dobin Oricutron
-  fi
+if use sdl2; then
+    dobin "${BUILD_DIR}/Oricutron-sdl2"
+else
+    dobin "${BUILD_DIR}/Oricutron"
+fi
+
   dodoc ReadMe.txt ChangeLog.txt oricutron.cfg
 
   insinto /usr/share/oricutron/images
