@@ -12,15 +12,16 @@ KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
 IUSE=""
 
 DEPEND="x11-libs/gtk+:2
-	x11-libs/libX11
-	virtual/pkgconfig
-	sys-devel/automake
-	sys-devel/autoconf
-	sys-devel/libtool"
+  x11-libs/libX11
+  virtual/pkgconfig
+  virtual/automake
+  sys-devel/autoconf
+  sys-devel/libtool"
 RDEPEND="${DEPEND}"
+BDEPEND="=sys-devel/automake-1.15*"
 
 src_prepare() {
-	default
-	eautoreconf
-	# eapply "${FILESDIR}"/wmstickynotes-0.7-clang16.patch  # Optional
+  default
+  eautoreconf
+  # eapply "${FILESDIR}"/wmstickynotes-0.7-clang16.patch  # Optional
 }
