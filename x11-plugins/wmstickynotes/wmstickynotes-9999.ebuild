@@ -18,7 +18,7 @@ DEPEND="x11-libs/gtk+:2
   sys-devel/autoconf
   sys-devel/libtool"
 RDEPEND="${DEPEND}"
-BDEPEND="=sys-devel/automake-1.15*"
+BDEPEND="virtual/autoconf"
 
 src_prepare() {
   default
