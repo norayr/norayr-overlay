@@ -15,10 +15,9 @@ DEPEND="x11-libs/gtk+:2
   x11-libs/libX11
   virtual/pkgconfig
   virtual/automake
-  sys-devel/autoconf
+  virtual/autoconf
   sys-devel/libtool"
 RDEPEND="${DEPEND}"
-BDEPEND="virtual/autoconf"
 
 src_prepare() {
   default
