@@ -12,14 +12,14 @@ KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
 IUSE=""
 
 DEPEND="x11-libs/gtk+:2
-	x11-libs/libX11
-	virtual/pkgconfig
-	virtual/automake
-	virtual/autoconf
-	dev-build/libtool"
+  x11-libs/libX11
+  virtual/pkgconfig
+  dev-build/automake
+  dev-build/autoconf
+  dev-build/libtool"
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	default
-	eautoreconf
+  default
+  eautoreconf
 }
