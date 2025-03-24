@@ -1,8 +1,8 @@
 EAPI=8
 
-inherit git-r3
+inherit git-r3 autotools
 
-DESCRIPTION="Sticky notes app for Window Maker, from GitHub fork"
+DESCRIPTION="sticky notes app for Window Maker"
 HOMEPAGE="https://github.com/norayr/wmstickynotes"
 EGIT_REPO_URI="https://github.com/norayr/wmstickynotes.git"
 
@@ -13,19 +13,13 @@ IUSE=""
 
 DEPEND="x11-libs/gtk+:2
 	x11-libs/libX11
-	virtual/pkgconfig"
+	virtual/pkgconfig
+	virtual/automake
+	virtual/autoconf
+	dev-build/libtool"
 RDEPEND="${DEPEND}"
 
 src_prepare() {
 	default
-	# No autoreconf needed!
-}
-
-src_configure() {
-	default
-}
-
-src_install() {
-	emake DESTDIR="${D}" install
-	dodoc README
+	eautoreconf
 }
