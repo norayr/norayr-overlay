@@ -8,7 +8,7 @@ EGIT_REPO_URI="https://github.com/norayr/shermans_aquarium.git"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 IUSE=""
 
 DEPEND="

@@ -11,8 +11,8 @@ EGIT_REPO_URI="https://coolbug.org/earthworm/repo/bw/helianthuslab"
 
 LICENSE="public-domain"
 SLOT="0"
-KEYWORDS=""
-Iuse=""  # no use flags
+KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+IUSE=""  # no use flags
 
 # Build-time tools
 BDEPEND="virtual/pkgconfig

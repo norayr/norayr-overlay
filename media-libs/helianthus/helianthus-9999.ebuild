@@ -12,7 +12,7 @@ EGIT_REPO_URI="https://coolbug.org/earthworm/repo/bw/helianthus"
 
 LICENSE="public-domain"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 IUSE=""
 
 # Build-time dependencies
@@ -27,11 +27,11 @@ DEPEND="media-libs/libsdl2
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	# Adjust installation paths for Gentoo (use lib64 on 64-bit systems)
-	sed -i -e "/idir_lib/s:\$PREFIX/lib:\$PREFIX/$(get_libdir):" src/SConstruct || die
-	sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
-	eapply "${FILESDIR}/helianthus-9999-prefix.patch"
-	eapply_user
+  # Adjust installation paths for Gentoo (use lib64 on 64-bit systems)
+  sed -i -e "/idir_lib/s:\$PREFIX/lib:\$PREFIX/$(get_libdir):" src/SConstruct || die
+  sed -i -e "s:'/usr/local':${EPREFIX}/usr:g" src/SConstruct || die
+  eapply "${FILESDIR}/helianthus-9999-prefix.patch"
+  eapply_user
 }
 
 src_configure() {

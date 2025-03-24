@@ -6,7 +6,7 @@ SRC_URI="mirror://sourceforge/wmlaptop/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 IUSE="longrun acpi"
 
 DEPEND="x11-libs/libX11

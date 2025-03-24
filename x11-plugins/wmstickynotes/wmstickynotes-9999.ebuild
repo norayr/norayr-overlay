@@ -9,20 +9,20 @@ EGIT_REPO_URI="https://github.com/norayr/wmstickynotes.git"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 IUSE=""
 
 DEPEND="x11-libs/gtk+:2
-	x11-libs/libX11"
+  x11-libs/libX11"
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	default
-	# Apply any local patches if needed
-	# eapply "${FILESDIR}"/wmstickynotes-0.7-clang16.patch
+  default
+  # Apply any local patches if needed
+  # eapply "${FILESDIR}"/wmstickynotes-0.7-clang16.patch
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
-	dodoc README
+  emake DESTDIR="${D}" install
+  dodoc README
 }
