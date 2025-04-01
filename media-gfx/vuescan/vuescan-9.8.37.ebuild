@@ -1,10 +1,10 @@
 EAPI=8
 
-DESCRIPTION="VueScan scanner software by Hamrick"
+DESCRIPTION="VueScan scanner software by Hamrick (older GTK2 version)"
 HOMEPAGE="https://www.hamrick.com/"
 SRC_URI="
-    amd64? ( https://www.hamrick.com/files/vuex6498.tgz )
-    arm64? ( https://www.hamrick.com/files/vuea6498.tgz )
+    amd64? ( https://files.hamrick.com/version-archive/9.8.37/vuex3298.tgz )
+    arm64? ( https://files.hamrick.com/version-archive/9.8.37/vuea3298.tgz )
 "
 
 LICENSE="all-rights-reserved"
@@ -13,8 +13,7 @@ KEYWORDS="~amd64 ~arm64"
 IUSE=""
 
 RDEPEND="
-    x11-libs/gtk+:3[wayland]
-    x11-libs/gdk-pixbuf
+    x11-libs/gtk+:2
     x11-libs/libX11
     dev-libs/glib:2
     x11-libs/pango
