@@ -12,10 +12,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE=""
 
-BDEPEND=""
-RDEPEND=""
-
-S="${WORKDIR}"
+S="${WORKDIR}/VueScan"
 
 src_install() {
     # Main binary
