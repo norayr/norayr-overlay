@@ -45,9 +45,20 @@ src_install() {
         instdir="/opt/voc-tcc"
     fi
 
-    # Tell the Makefile to install into the sandboxed image directory
+    # Prevent ldconfig and /etc/ld.so.conf.d/ writes
+    echo -e "#!/bin/sh\nexit 0" > src/tools/make/addlibrary.sh
+    chmod +x src/tools/make/addlibrary.sh
+
     emake INSTALLDIR="${D}${instdir}" install
 
+    # Symlinks
     dosym "${instdir}/bin/voc" /usr/bin/voc
     dosym "${instdir}/bin/showdef" /usr/bin/showdef
+
+    # Create env.d entry for runtime linker
+    cat > "${T}/90voc" <<EOF
+LDPATH=${instdir}/lib
+EOF
+
+    doenvd "${T}/90voc"
 }
