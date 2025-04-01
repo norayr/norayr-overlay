@@ -2,14 +2,12 @@ EAPI=8
 
 DESCRIPTION="VueScan scanner software by Hamrick (GTK2, 64-bit only)"
 HOMEPAGE="https://www.hamrick.com/"
-SRC_URI="amd64? ( https://www.hamrick.com/oldfiles/vuex6496.tgz )"
+SRC_URI="https://www.hamrick.com/oldfiles/vuex6496.tgz"
 
 LICENSE="all-rights-reserved"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
-
-RESTRICT="mirror bindist"  # just in case, to avoid automatic mirroring
+RESTRICT="mirror bindist"
 
 RDEPEND="
     x11-libs/gtk+:2
@@ -30,17 +28,19 @@ S="${WORKDIR}/VueScan"
 src_install() {
     dobin vuescan
 
-    insinto /lib/udev/rules.d
-    newins vuescan.rul 60-vuescan.rules
+    # Optional: install VueScan plugins (Photoshop TWAIN/Acquire? Not typically needed)
+    insinto /usr/share/vuescan
+    doins vuescan.8ba vuescan.ds
 
+    # Install icon
     insinto /usr/share/icons/hicolor/scalable/apps
     doins vuescan.svg
 
-    dodoc README.txt
+    # Optional: install desktop file
+    make_desktop_entry vuescan "VueScan" vuescan Scanner
 }
 
 pkg_postinst() {
-    udevadm control --reload-rules
     xdg_icon_cache_update
 }
 
