@@ -16,7 +16,6 @@ RDEPEND="
     net-im/pidgin
     dev-libs/glib:2
     dev-libs/json-glib
-    net-libs/libpurple
     dev-libs/protobuf-c
 "
 
