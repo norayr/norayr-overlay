@@ -20,7 +20,6 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
-    dev-util/protobuf-c
     virtual/pkgconfig
 "
 
