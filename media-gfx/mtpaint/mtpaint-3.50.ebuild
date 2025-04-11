@@ -1,6 +1,3 @@
-# Copyright 2025
-# Distributed under the terms of the GNU General Public License v2
-
 EAPI=8
 
 DESCRIPTION="Simple painting program for creating icons, pixel-based artwork, and manipulating digital photos"
@@ -20,16 +17,15 @@ DEPEND="
 "
 
 RDEPEND="${DEPEND}"
-
 BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
   default
-  # Fix path for installing docs and stripping
+  # Fix install paths and flags in Makefile (uppercase!)
   sed -i \
     -e 's|/usr/local|/usr|g' \
     -e 's|CFLAGS =|CFLAGS +=|g' \
-    makefile || die
+    Makefile || die
 }
 
 src_compile() {
@@ -39,7 +35,7 @@ src_compile() {
 src_install() {
   emake PREFIX="${D}/usr" install
 
-  dodoc README* NEWS TODO
+  dodoc README NEWS
   doicon src/pixmaps/icon48.png
   make_desktop_entry mtpaint "mtPaint" /usr/share/pixmaps/icon48.png Graphics
 }
