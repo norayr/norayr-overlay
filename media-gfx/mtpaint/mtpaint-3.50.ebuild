@@ -21,7 +21,7 @@ BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
   default
-  # Fix install paths and flags in Makefile (uppercase!)
+  # Adjust install path and flags
   sed -i \
     -e 's|/usr/local|/usr|g' \
     -e 's|CFLAGS =|CFLAGS +=|g' \
@@ -29,22 +29,24 @@ src_prepare() {
 }
 
 src_compile() {
-    emake -C src \
-        CFLAGS="${CFLAGS} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-        LDFLAGS="${LDFLAGS}" \
-        PREFIX=/usr
+  local gtk2_cflags=$(pkg-config --cflags gtk+-2.0)
+  local gtk2_libs=$(pkg-config --libs gtk+-2.0)
+
+  emake -C src clean
+
+  emake -C src \
+    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
+    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz" \
+    OBJS="main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
+          viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
+          channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
+          thread.o vcode.o" \
+    PREFIX=/usr
 }
 
 src_install() {
-    dobin src/mtpaint
-    dodoc README
-    doman mtpaint.1
-}
-
-src_install() {
-  emake PREFIX="${D}/usr" install
-
+  dobin src/mtpaint
   dodoc README NEWS
   doicon src/pixmaps/icon48.png
-  make_desktop_entry mtpaint "mtPaint" /usr/share/pixmaps/icon48.png Graphics
+  make_desktop_entry mtpaint "mtPaint" /usr/share/icons/hicolor/48x48/apps/mtpaint.png
 }
