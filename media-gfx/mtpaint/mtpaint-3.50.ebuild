@@ -29,20 +29,18 @@ src_prepare() {
 }
 
 src_compile() {
+  cd src || die
   local gtk2_cflags=$(pkg-config --cflags gtk+-2.0)
   local gtk2_libs=$(pkg-config --libs gtk+-2.0)
 
   emake clean
-emake \
-  CFLAGS="${CFLAGS} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-  main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
-  viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
-  channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
-  thread.o vcode.o || die "object build failed"
+    emake \
+        CFLAGS="${CFLAGS} -DMT_VERSION=\\\"${PV}\\\" -fcommon"
 
-# Now link them
-${CC} ${LDFLAGS} -o mtpaint *.o \
-  $(pkg-config --libs gtk+-2.0) -lX11 -lm -lpng -lz || die "link failed"
+    # Manually perform linking to include all required libs
+    ${CC} ${LDFLAGS} -o mtpaint *.o \
+        $(pkg-config --libs gtk+-2.0) \
+        -lX11 -lm -lpng -lz || die "manual link failed"
   PREFIX=/usr
 }
 
