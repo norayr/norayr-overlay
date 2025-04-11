@@ -35,10 +35,14 @@ src_compile() {
   emake clean
 emake \
   CFLAGS="${CFLAGS} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-  OBJS="main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
-        viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
-        channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
-        thread.o vcode.o" \
+  main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
+  viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
+  channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
+  thread.o vcode.o || die "object build failed"
+
+# Now link them
+${CC} ${LDFLAGS} -o mtpaint *.o \
+  $(pkg-config --libs gtk+-2.0) -lX11 -lm -lpng -lz || die "link failed"
   PREFIX=/usr
 }
 
