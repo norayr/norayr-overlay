@@ -29,7 +29,6 @@ src_prepare() {
   #eapply "${FILESDIR}/mtpaint-3.50-fix-objlist.patch"
 }
 
-
 src_configure() {
   # Let the project's own script set up _conf.txt
   ./configure || die "configure script failed"
@@ -41,18 +40,11 @@ src_compile() {
 
   emake -C src clean
 
-  # Manually compile those files before emake mtpaint
-  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/cpick.c -o src/cpick.o || die
-  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/fpick.c -o src/fpick.o || die
-  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/vcode.c -o src/vcode.o || die
-  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/thread.c -o src/thread.o || die
-
   emake -C src \
-    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
+    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon -DU_FPICK_MTPAINT -DU_CPICK_MTPAINT" \
     LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz" \
     PREFIX=/usr
 }
-
 
 src_install() {
   dobin src/mtpaint
