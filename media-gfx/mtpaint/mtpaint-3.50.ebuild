@@ -34,7 +34,7 @@ src_compile() {
 
   emake \
     CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng" \
+    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz" \
     PREFIX=/usr
 }
 
