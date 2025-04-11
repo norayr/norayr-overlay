@@ -34,10 +34,9 @@ src_compile() {
 
   emake \
     CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11" \
+    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm" \
     PREFIX=/usr
 }
-
 
 src_install() {
   emake PREFIX="${D}/usr" install
