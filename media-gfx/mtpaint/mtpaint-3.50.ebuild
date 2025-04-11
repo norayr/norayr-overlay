@@ -20,12 +20,15 @@ BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
   default
-  # Fix paths and avoid hardcoding /usr/local
+
   sed -i \
     -e 's|/usr/local|/usr|g' \
     -e 's|CFLAGS =|CFLAGS +=|g' \
     Makefile || die
+
+  eapply "${FILESDIR}/mtpaint-3.50-fix-objlist.patch"
 }
+
 
 src_configure() {
   # Let the project's own script set up _conf.txt
