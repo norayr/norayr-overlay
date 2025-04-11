@@ -41,15 +41,15 @@ src_compile() {
 
   emake -C src clean
 
-  local objs="main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
-    viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
-    channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
-    thread.o vcode.o"
+  # Manually compile those files before emake mtpaint
+  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/cpick.c -o src/cpick.o || die
+  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/fpick.c -o src/fpick.o || die
+  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/vcode.c -o src/vcode.o || die
+  gcc ${CFLAGS} ${gtk2_cflags} -DMT_VERSION="\"${PV}\"" -fcommon -c src/thread.c -o src/thread.o || die
 
   emake -C src \
     CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
     LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz" \
-    OBJS="${objs}" \
     PREFIX=/usr
 }
 
