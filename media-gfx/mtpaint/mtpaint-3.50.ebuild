@@ -26,7 +26,7 @@ src_prepare() {
     -e 's|CFLAGS =|CFLAGS +=|g' \
     Makefile || die
 
-  eapply "${FILESDIR}/mtpaint-3.50-fix-objlist.patch"
+  #eapply "${FILESDIR}/mtpaint-3.50-fix-objlist.patch"
 }
 
 
