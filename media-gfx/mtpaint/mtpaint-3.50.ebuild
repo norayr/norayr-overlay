@@ -29,19 +29,16 @@ src_prepare() {
 }
 
 src_compile() {
-  cd src || die
-  local gtk2_cflags=$(pkg-config --cflags gtk+-2.0)
-  local gtk2_libs=$(pkg-config --libs gtk+-2.0)
+    emake -C src \
+        CFLAGS="${CFLAGS} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
+        LDFLAGS="${LDFLAGS}" \
+        PREFIX=/usr
+}
 
-  emake clean
-    emake \
-        CFLAGS="${CFLAGS} -DMT_VERSION=\\\"${PV}\\\" -fcommon"
-
-    # Manually perform linking to include all required libs
-    ${CC} ${LDFLAGS} -o mtpaint *.o \
-        $(pkg-config --libs gtk+-2.0) \
-        -lX11 -lm -lpng -lz || die "manual link failed"
-  PREFIX=/usr
+src_install() {
+    dobin src/mtpaint
+    dodoc README
+    doman mtpaint.1
 }
 
 src_install() {
