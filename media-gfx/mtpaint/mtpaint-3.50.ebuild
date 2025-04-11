@@ -34,15 +34,25 @@ src_compile() {
 
   emake -C src clean
 
+  # Build all objects using emake but don’t let it link
   emake -C src \
     CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz" \
-    OBJS="main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
-          viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
-          channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
-          thread.o vcode.o" \
-    PREFIX=/usr
+    LDFLAGS="${LDFLAGS}" \
+    PREFIX=/usr \
+    mtpaint.o  # dummy target to suppress default linking
+
+  # Link manually
+  local objlist="main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
+    viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
+    channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
+    thread.o vcode.o"
+
+  pushd src > /dev/null || die
+  ${CC} ${CFLAGS} -o mtpaint ${objlist} \
+    ${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz || die "linking failed"
+  popd > /dev/null || die
 }
+
 
 src_install() {
   dobin src/mtpaint
