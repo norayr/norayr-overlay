@@ -34,7 +34,7 @@ src_compile() {
   local gtk2_libs=$(pkg-config --libs gtk+-2.0)
 
   emake \
-    CFLAGS="${CFLAGS} ${gtk2_cflags}" \
+    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\"" \
     LDFLAGS="${LDFLAGS} ${gtk2_libs}" \
     PREFIX=/usr
 }
