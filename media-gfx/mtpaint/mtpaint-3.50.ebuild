@@ -15,44 +15,29 @@ DEPEND="
   x11-libs/gtk+:2
   nls? ( sys-devel/gettext )
 "
-
 RDEPEND="${DEPEND}"
 BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
   default
-  # Adjust install path and flags
+  # Fix paths and avoid hardcoding /usr/local
   sed -i \
     -e 's|/usr/local|/usr|g' \
     -e 's|CFLAGS =|CFLAGS +=|g' \
     Makefile || die
 }
 
-src_compile() {
-  local gtk2_cflags=$(pkg-config --cflags gtk+-2.0)
-  local gtk2_libs=$(pkg-config --libs gtk+-2.0)
-
-  emake -C src clean
-
-  # Build all objects using emake but don’t let it link
-  emake -C src \
-    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
-    LDFLAGS="${LDFLAGS}" \
-    PREFIX=/usr \
-    mtpaint.o  # dummy target to suppress default linking
-
-  # Link manually
-  local objlist="main.o mainwindow.o inifile.o png.o memory.o canvas.o otherwindow.o mygtk.o \
-    viewer.o polygon.o layer.o info.o wu.o prefs.o ani.o mtlib.o toolbar.o \
-    channels.o csel.o shifter.o spawn.o font.o fpick.o icons.o cpick.o \
-    thread.o vcode.o"
-
-  pushd src > /dev/null || die
-  ${CC} ${CFLAGS} -o mtpaint ${objlist} \
-    ${LDFLAGS} ${gtk2_libs} -lX11 -lm -lpng -lz || die "linking failed"
-  popd > /dev/null || die
+src_configure() {
+  # Let the project's own script set up _conf.txt
+  ./configure || die "configure script failed"
 }
 
+src_compile() {
+  emake -C src \
+    CFLAGS="${CFLAGS} $(pkg-config --cflags gtk+-2.0) -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
+    LDFLAGS="${LDFLAGS} $(pkg-config --libs gtk+-2.0) -lX11 -lm -lpng -lz" \
+    PREFIX=/usr
+}
 
 src_install() {
   dobin src/mtpaint
