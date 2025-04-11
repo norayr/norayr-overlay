@@ -29,15 +29,15 @@ src_prepare() {
 }
 
 src_compile() {
-  # Use pkg-config to get GTK+2 flags
   local gtk2_cflags=$(pkg-config --cflags gtk+-2.0)
   local gtk2_libs=$(pkg-config --libs gtk+-2.0)
 
   emake \
-    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\"" \
-    LDFLAGS="${LDFLAGS} ${gtk2_libs}" \
+    CFLAGS="${CFLAGS} ${gtk2_cflags} -DMT_VERSION=\\\"${PV}\\\" -fcommon" \
+    LDFLAGS="${LDFLAGS} ${gtk2_libs} -lX11" \
     PREFIX=/usr
 }
+
 
 src_install() {
   emake PREFIX="${D}/usr" install
