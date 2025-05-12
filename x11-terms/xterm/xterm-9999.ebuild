@@ -77,4 +77,21 @@ src_configure() {
     $(use_enable unicode mini-luit)
     $(use_with Xaw3d)
     $(use_with xinerama)
+  )
 
+  econf "${myeconfargs[@]}"
+}
+
+src_install() {
+  default
+
+  docinto html
+  dodoc xterm.log.html
+
+  sed -i -e 's/_48x48//g' *.desktop || die
+  domenu *.desktop
+
+  fperms 0755 /usr/bin/xterm
+
+  sed -i -e 's:blue2$:blue:' "${D}${DEFAULTS_DIR}"/XTerm-color || die
+}
