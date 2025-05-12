@@ -4,17 +4,19 @@
 EAPI=8
 
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/thomasdickey.asc
-
-inherit desktop flag-o-matic git-r3 toolchain-funcs xdg
+inherit desktop flag-o-matic toolchain-funcs verify-sig xdg
 
 DESCRIPTION="Terminal Emulator for X Windows with optional ReGIS support"
 HOMEPAGE="https://invisible-island.net/xterm/"
-EGIT_REPO_URI="https://invisible-island.net/xterm/xterm.git"
+SRC_URI="
+  https://invisible-island.net/archives/${PN}/${P}.tgz
+  verify-sig? ( https://invisible-island.net/archives/${PN}/${P}.tgz.asc )
+"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS=""
-IUSE="+openpty sixel toolbar truetype unicode Xaw3d xinerama +regis"
+KEYWORDS="~amd64 ~x86"
+IUSE="+openpty sixel toolbar truetype unicode Xaw3d xinerama +regis verify-sig"
 
 DEPEND="
   kernel_linux? ( sys-libs/libutempter )
@@ -36,14 +38,16 @@ RDEPEND="${DEPEND}
   media-fonts/font-misc-misc
   x11-apps/rgb"
 DEPEND+=" x11-base/xorg-proto"
-BDEPEND="virtual/pkgconfig"
+BDEPEND="
+  virtual/pkgconfig
+  verify-sig? ( sec-keys/openpgp-keys-thomasdickey )
+"
 
 DOCS=( README{,.i18n} ctlseqs.txt )
 
 src_configure() {
   DEFAULTS_DIR="${EPREFIX}"/usr/share/X11/app-defaults
 
-  # Workaround for ncurses[tinfo]
   append-libs $($(tc-getPKG_CONFIG) --libs ncurses)
 
   local myeconfargs=(
