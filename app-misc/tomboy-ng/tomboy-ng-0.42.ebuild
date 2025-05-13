@@ -14,7 +14,7 @@ IUSE=""
 
 DEPEND="dev-lang/fpc
         dev-lang/lazarus
-    dev-libs/printer4lazarus"
+        dev-libs/printer4lazarus"
 RDEPEND="${DEPEND}"
 
 LAZARUS_PATH="/usr/share/lazarus"
