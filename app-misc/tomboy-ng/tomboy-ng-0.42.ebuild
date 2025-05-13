@@ -13,7 +13,8 @@ KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
 IUSE=""
 
 DEPEND="dev-lang/fpc
-        dev-lang/lazarus"
+        dev-lang/lazarus
+    dev-libs/printer4lazarus"
 RDEPEND="${DEPEND}"
 
 LAZARUS_PATH="/usr/share/lazarus"
