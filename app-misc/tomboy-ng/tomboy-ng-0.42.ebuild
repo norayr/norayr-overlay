@@ -22,7 +22,11 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_compile() {
-	cd source || die "source/ not found"
+	cd source || die
+
+	# Lazarus can't auto-detect, so we export explicitly
+	export LAZARUS_DIR="/usr/share/lazarus"
+
 	lazbuild --build-all Tomboy_NG.lpi || die "lazbuild failed"
 }
 
