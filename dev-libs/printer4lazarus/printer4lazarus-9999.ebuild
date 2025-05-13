@@ -7,6 +7,11 @@ SRC_URI="https://gitlab.com/freepascal.org/lazarus/lazarus/-/archive/main/lazaru
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm ~arm64"
+IUSE=""
+
+# Add CUPS as a dependency
+DEPEND="net-print/cups"
+RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/lazarus-main/components/printers"
 
@@ -17,7 +22,6 @@ src_compile() {
 src_install() {
 	insinto /usr/share/lazarus/components/printer4lazarus
 	for f in *.pas *.pp *.inc *.lpk; do
-	[[ -e ${f} ]] && doins -r "${f}"
-done
-
+		[[ -e ${f} ]] && doins -r "${f}"
+	done
 }
