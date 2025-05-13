@@ -16,5 +16,8 @@ src_compile() {
 
 src_install() {
 	insinto /usr/share/lazarus/components/printer4lazarus
-	doins -r *.pas *.pp *.inc *.lpk
+	for f in *.pas *.pp *.inc *.lpk; do
+	[[ -e ${f} ]] && doins -r "${f}"
+done
+
 }
