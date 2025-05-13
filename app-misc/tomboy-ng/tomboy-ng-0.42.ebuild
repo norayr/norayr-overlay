@@ -34,6 +34,7 @@ src_compile() {
     -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/" \
     -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/gtk2/" \
     -Fu"${LAZARUS_PATH}/packager/units/${ARCH}/" \
+  -Fu"${LAZARUS_PATH}/components/printer4lazarus" \
     -Fu. -otomboy-ng \
     -dLCL -dLCLgtk2 || die "fpc build failed"
 }
