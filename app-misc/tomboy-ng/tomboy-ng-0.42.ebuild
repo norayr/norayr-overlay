@@ -28,6 +28,7 @@ src_compile() {
   fpc Tomboy_NG.lpr \
     -MObjFPC -Scgi -O1 -gl -vewnhi -l -Xs -Xg \
     -FU"${TMPDIR}" \
+    -Fi"${LAZARUS_PATH}/components/printers/unix" \ 
     -Fu"${LAZARUS_PATH}/components/lazutils" \
     -Fu"${LAZARUS_PATH}/components/synedit" \
     -Fu"${LAZARUS_PATH}/components/synedit/units/${ARCH}" \
@@ -39,7 +40,6 @@ src_compile() {
     -Fu. -otomboy-ng \
     -dLCL -dLCLgtk2 || die "fpc build failed"
 }
-
 src_install() {
   cd source || die
   dobin tomboy-ng
