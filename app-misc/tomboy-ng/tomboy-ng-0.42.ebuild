@@ -1,6 +1,3 @@
-# Copyright 2025
-# Distributed under the terms of the GNU General Public License v2
-
 EAPI=8
 
 inherit git-r3 desktop
@@ -12,36 +9,45 @@ EGIT_COMMIT="v0.42"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
 IUSE=""
 
-DEPEND="
-	dev-lang/fpc
-	dev-lang/lazarus
-"
+DEPEND="dev-lang/fpc
+        dev-lang/lazarus"
 RDEPEND="${DEPEND}"
 
+LAZARUS_PATH="/usr/share/lazarus"
+
 src_compile() {
-	cd source || die
+  cd source || die "source/ directory not found"
 
-	# Lazarus can't auto-detect, so we export explicitly
-	export LAZARUS_DIR="/usr/share/lazarus"
+  local ARCH=$(uname -m)-linux
+  local TMPDIR="${T}/units"
+  mkdir -p "${TMPDIR}" || die "Failed to create unit output dir"
 
-	lazbuild --build-all Tomboy_NG.lpi || die "lazbuild failed"
+  fpc Tomboy_NG.lpr \
+    -MObjFPC -Scgi -O1 -gl -vewnhi -l -Xs -Xg \
+    -FU"${TMPDIR}" \
+    -Fu"${LAZARUS_PATH}/components/lazutils" \
+    -Fu"${LAZARUS_PATH}/components/synedit" \
+    -Fu"${LAZARUS_PATH}/components/synedit/units/${ARCH}" \
+    -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/" \
+    -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/gtk2/" \
+    -Fu"${LAZARUS_PATH}/packager/units/${ARCH}/" \
+    -Fu. -otomboy-ng \
+    -dLCL -dLCLgtk2 || die "fpc build failed"
 }
 
 src_install() {
-	cd source || die
+  cd source || die
+  dobin tomboy-ng
 
-	# Install binary (name is generated as 'tomboy-ng' despite .lpi name)
-	dobin tomboy-ng || die "no binary tomboy-ng found"
+  # .desktop and icon
+  insinto /usr/share/applications
+  doins ../glyphs/tomboy-ng.desktop
 
-	# Install icon and desktop file
-	insinto /usr/share/applications
-	doins ../glyphs/tomboy-ng.desktop
+  insinto /usr/share/pixmaps
+  doins ../glyphs/icons/hicolor/256x256/apps/tomboy-ng.png
 
-	insinto /usr/share/pixmaps
-	doins ../glyphs/icons/hicolor/256x256/apps/tomboy-ng.png
-
-	dodoc ../README.md
+  dodoc ../README.md
 }
