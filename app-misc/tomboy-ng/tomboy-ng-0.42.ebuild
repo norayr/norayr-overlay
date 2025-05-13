@@ -13,8 +13,7 @@ KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
 IUSE=""
 
 DEPEND="dev-lang/fpc
-        dev-lang/lazarus
-        dev-libs/printer4lazarus"
+           dev-lang/lazarus"
 RDEPEND="${DEPEND}"
 
 LAZARUS_PATH="/usr/share/lazarus"
@@ -35,7 +34,9 @@ src_compile() {
     -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/" \
     -Fu"${LAZARUS_PATH}/lcl/units/${ARCH}/gtk2/" \
     -Fu"${LAZARUS_PATH}/packager/units/${ARCH}/" \
-  -Fu"${LAZARUS_PATH}/components/printer4lazarus" \
+    -Fu"${LAZARUS_PATH}/components/printers" \
+    -Fu"${LAZARUS_PATH}/components/printers/unix"
+
     -Fu. -otomboy-ng \
     -dLCL -dLCLgtk2 || die "fpc build failed"
 }
