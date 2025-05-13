@@ -9,7 +9,7 @@ DESCRIPTION="Modern rewrite of Tomboy Notes using FreePascal and Lazarus"
 HOMEPAGE="https://github.com/tomboy-notes/tomboy-ng"
 SRC_URI=""
 EGIT_REPO_URI="https://github.com/tomboy-notes/tomboy-ng.git"
-EGIT_COMMIT="v0.36"
+EGIT_COMMIT="v0.42"
 
 LICENSE="GPL-3"
 SLOT="0"
