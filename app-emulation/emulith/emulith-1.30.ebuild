@@ -36,24 +36,19 @@ S="${WORKDIR}"
 src_prepare() {
     default
 
-    # Escape FLTK paths
-    local fltk_cflags=$(fltk-config --cflags)
-    local fltk_libdir=$(fltk-config --libdir)
-
-    local fltk_cflags_escaped=${fltk_cflags//\//\\/}
-    local fltk_libdir_escaped=${fltk_libdir//\//\\/}
-
+    # safer placeholders
     sed -i \
-        -e "s|-Ifltk|${fltk_cflags_escaped}|g" \
-        -e "s|fltk/lib|${fltk_libdir_escaped}|g" \
+        -e '/g++/s|-Ifltk|$(shell fltk-config --cflags)|' \
+        -e '/g++/s|fltk/lib|$(shell fltk-config --libdir)|' \
         Makefile || die "sed failed"
 
-    # Fix data path in source
+    # Fix paths in source
     sed -i \
         -e 's|img/|/usr/share/emulith/img/|g' \
         -e 's|mcode/|/usr/share/emulith/mcode/|g' \
         Src/fltk_cde.c || die "sed failed"
 }
+
 
 src_compile() {
     append-cxxflags $(fltk-config --cxxflags)
