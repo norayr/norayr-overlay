@@ -36,23 +36,26 @@ S="${WORKDIR}"
 src_prepare() {
   default
 
-  # Escape fltk path elements (assumes they are declared/set earlier or default to something sane)
   local fltk_cflags_escaped="-Ifltk"
   local fltk_libdir_escaped="fltk/lib"
 
-  # Fix Makefile to replace FLTK includes/paths with escaped versions
   sed -i \
     -e "s|-Ifltk|${fltk_cflags_escaped}|g" \
     -e "s|fltk/lib|${fltk_libdir_escaped}|g" \
     Makefile || die "sed failed"
 
-  # Undefine conflicting macros before FLTK includes
+  # Undefine all b0..b7 before FLTK includes to prevent macro collision
   sed -i '/#include "lilith.h"/a \
 #ifdef b0\n#undef b0\n#endif\n\
-#ifdef b1\n#undef b1\n#endif' \
-    Src/fltk_cde.c || die "sed undef b0/b1 failed"
+#ifdef b1\n#undef b1\n#endif\n\
+#ifdef b2\n#undef b2\n#endif\n\
+#ifdef b3\n#undef b3\n#endif\n\
+#ifdef b4\n#undef b4\n#endif\n\
+#ifdef b5\n#undef b5\n#endif\n\
+#ifdef b6\n#undef b6\n#endif\n\
+#ifdef b7\n#undef b7\n#endif' \
+    Src/fltk_cde.c || die "sed undef b0-b7 failed"
 }
-
 
 src_compile() {
     append-cxxflags $(fltk-config --cxxflags)
