@@ -34,19 +34,23 @@ DEPEND="${RDEPEND}"
 S="${WORKDIR}"
 
 src_prepare() {
-    default
+  default
 
-    # safer placeholders
-    sed -i \
-        -e '/g++/s|-Ifltk|$(shell fltk-config --cflags)|' \
-        -e '/g++/s|fltk/lib|$(shell fltk-config --libdir)|' \
-        Makefile || die "sed failed"
+  # Escape fltk path elements (assumes they are declared/set earlier or default to something sane)
+  local fltk_cflags_escaped="-Ifltk"
+  local fltk_libdir_escaped="fltk/lib"
 
-    # Fix paths in source
-    sed -i \
-        -e 's|img/|/usr/share/emulith/img/|g' \
-        -e 's|mcode/|/usr/share/emulith/mcode/|g' \
-        Src/fltk_cde.c || die "sed failed"
+  # Fix Makefile to replace FLTK includes/paths with escaped versions
+  sed -i \
+    -e "s|-Ifltk|${fltk_cflags_escaped}|g" \
+    -e "s|fltk/lib|${fltk_libdir_escaped}|g" \
+    Makefile || die "sed failed"
+
+  # Undefine conflicting macros before FLTK includes
+  sed -i '/#include "lilith.h"/a \
+#ifdef b0\n#undef b0\n#endif\n\
+#ifdef b1\n#undef b1\n#endif' \
+    Src/fltk_cde.c || die "sed undef b0/b1 failed"
 }
 
 
