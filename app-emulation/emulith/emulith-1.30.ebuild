@@ -26,18 +26,19 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/emulith"
+S="${WORKDIR}"
 
 src_prepare() {
+    cd emulith || die
     default
-
-    # Fix FLTK include path in Makefile
+    
+    # Fix paths in Makefile
     sed -i \
         -e "s|-Ifltk|$(fltk-config --cflags)|g" \
         -e "s|fltk/lib|$(fltk-config --libdir)|g" \
         Makefile || die "sed failed"
-
-    # Fix hardcoded paths in source code
+    
+    # Fix hardcoded paths
     sed -i \
         -e "s|img/|/usr/share/emulith/img/|g" \
         -e "s|mcode/|/usr/share/emulith/mcode/|g" \
@@ -45,9 +46,10 @@ src_prepare() {
 }
 
 src_compile() {
+    cd emulith || die
     append-cxxflags $(fltk-config --cxxflags)
     append-ldflags $(fltk-config --ldflags)
-
+    
     emake lin \
         CXX="$(tc-getCXX)" \
         CC="$(tc-getCC)" \
@@ -57,10 +59,10 @@ src_compile() {
 }
 
 src_install() {
-    dobin emulith
-
+    dobin emulith/emulith
+    
     insinto /usr/share/emulith
-    doins -r img mcode ascii.def emulith.ini
+    doins -r emulith/img emulith/mcode emulith/ascii.def emulith/emulith.ini
 
     # Install documentation
     dodoc "${DISTDIR}/LilithHandbook_Aug82.pdf"
