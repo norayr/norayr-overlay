@@ -19,10 +19,10 @@ src_unpack() {
     go-module_src_unpack
 }
 
-src_prepare() {
-    default
-    export GOPROXY=off
-}
+#src_prepare() {
+#    default
+#    export GOPROXY=off
+#}
 
 src_compile() {
     ego build -o local-ai .
