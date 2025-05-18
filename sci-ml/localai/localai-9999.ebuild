@@ -1,4 +1,3 @@
-# localai-9999.ebuild
 EAPI=8
 
 inherit git-r3 go-module
@@ -15,6 +14,11 @@ IUSE=""
 DEPEND="dev-lang/go"
 RDEPEND="${DEPEND}"
 
+src_unpack() {
+    git-r3_src_unpack
+    go-module_src_unpack
+}
+
 src_compile() {
     ego build -o local-ai .
 }
@@ -22,8 +26,5 @@ src_compile() {
 src_install() {
     dobin local-ai
     dodoc README.md
-    insinto /etc/localai
-    doins -r examples/*
     keepdir /var/lib/localai/models
 }
-
