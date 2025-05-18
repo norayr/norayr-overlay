@@ -74,28 +74,40 @@ src_compile() {
 }
 
 src_install() {
-    dobin emulith
+    # Install main binary as emulith-bin
+    newbin emulith emulith-bin || die
 
+    # Install wrapper script as emulith
+    cat > "${T}/emulith" << 'EOF'
+#!/bin/sh
+cd /usr/share/emulith || exit 1
+exec /usr/bin/emulith-bin "$@"
+EOF
+    dobin "${T}/emulith" || die
+    chmod +x "${ED}/usr/bin/emulith" || die
+
+    # Install optional support tools with prefix
     if use tools; then
         for bin in lft pp dmp; do
             newbin support/$bin emulith-$bin || die
         done
     fi
 
+    # Core runtime files
     insinto /usr/share/emulith
     doins -r img mcode ascii.def emulith.ini || die
 
+    # Optional floppy files
     if use floppy; then
         insinto /usr/share/emulith/floppy
         doins floppy/* || die
     fi
 
+    # Optional compiler files: install and extract zips
     if use compiler; then
-        # Install original zips for reference
         insinto /usr/share/emulith/compiler
         doins "${DISTDIR}"/ETH_Disks.zip "${DISTDIR}"/medos*.zip || die
 
-        # Unpack zip files into the same directory
         local compdir="${ED}/usr/share/emulith/compiler"
         mkdir -p "${compdir}" || die
 
@@ -104,12 +116,15 @@ src_install() {
         unzip -q -o "${DISTDIR}/medos_txt.zip" -d "${compdir}" || die "unzip medos_txt failed"
     fi
 
+    # Documentation
     dodoc "${DISTDIR}/LilithHandbook_Aug82.pdf"
     dodoc docu/Emulith_Manual_1.3.pdf docu/18-03-2012.txt || die
 
+    # Create writable user directory
     keepdir /var/lib/emulith
     dosym ../../var/lib/emulith /usr/share/emulith/userdata || die
 }
+
 
 
 pkg_postinst() {
