@@ -77,29 +77,40 @@ src_install() {
     dobin emulith
 
     if use tools; then
-        dobin support/lft support/pp support/dmp || die
+        for bin in lft pp dmp; do
+            newbin support/$bin emulith-$bin || die
+        done
     fi
 
     insinto /usr/share/emulith
-    doins -r img mcode ascii.def emulith.ini
+    doins -r img mcode ascii.def emulith.ini || die
 
     if use floppy; then
         insinto /usr/share/emulith/floppy
-        doins floppy/*
+        doins floppy/* || die
     fi
 
     if use compiler; then
+        # Install original zips for reference
         insinto /usr/share/emulith/compiler
-        doins "${DISTDIR}"/ETH_Disks.zip
-        doins "${DISTDIR}"/medos*.zip
+        doins "${DISTDIR}"/ETH_Disks.zip "${DISTDIR}"/medos*.zip || die
+
+        # Unpack zip files into the same directory
+        local compdir="${ED}/usr/share/emulith/compiler"
+        mkdir -p "${compdir}" || die
+
+        unzip -q -o "${DISTDIR}/ETH_Disks.zip" -d "${compdir}" || die "unzip ETH_Disks failed"
+        unzip -q -o "${DISTDIR}/medos.zip" -d "${compdir}" || die "unzip medos failed"
+        unzip -q -o "${DISTDIR}/medos_txt.zip" -d "${compdir}" || die "unzip medos_txt failed"
     fi
 
     dodoc "${DISTDIR}/LilithHandbook_Aug82.pdf"
-    dodoc docu/Emulith_Manual_1.3.pdf docu/18-03-2012.txt
+    dodoc docu/Emulith_Manual_1.3.pdf docu/18-03-2012.txt || die
 
     keepdir /var/lib/emulith
-    dosym ../../var/lib/emulith /usr/share/emulith/userdata
+    dosym ../../var/lib/emulith /usr/share/emulith/userdata || die
 }
+
 
 pkg_postinst() {
     elog "To start the emulator:"
