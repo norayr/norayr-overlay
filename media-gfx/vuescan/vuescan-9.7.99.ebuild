@@ -1,50 +1,51 @@
+# Copyright 2025
+# Distributed under the terms of the GNU General Public License v2
+
 EAPI=8
 
-DESCRIPTION="VueScan scanner software by Hamrick (GTK2, 64-bit)"
+DESCRIPTION="VueScan is a scanning application supporting hundreds of scanners"
 HOMEPAGE="https://www.hamrick.com/"
 SRC_URI="
-    amd64? ( https://www.hamrick.com/oldfiles/vuex6497.tgz )
-    arm64? ( https://www.hamrick.com/oldfiles/vuea6497.tgz )
+	amd64? ( https://www.hamrick.com/oldfiles/vuex6497.tgz -> vuescan-9.7.99-amd64.tgz )
+	x86?   ( https://www.hamrick.com/oldfiles/vuex3297.tgz -> vuescan-9.7.99-x86.tgz )
+	arm64? ( https://www.hamrick.com/oldfiles/vuea6497.tgz -> vuescan-9.7.99-arm64.tgz )
 "
 
-LICENSE="all-rights-reserved"
+LICENSE="vuescan"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64"
-IUSE=""
+KEYWORDS="~amd64 ~x86 ~arm64"
+RESTRICT="mirror bindist strip"
 
 RDEPEND="
-    x11-libs/gtk+:2
-    x11-libs/gdk-pixbuf:2
-    x11-libs/pango
-    x11-libs/cairo
-    dev-libs/glib:2
-    dev-libs/atk
-    virtual/libusb:1
-    x11-libs/libX11
-    x11-libs/libSM
-    virtual/libudev
-    sys-libs/zlib
+	x11-libs/gtk+:2
+	x11-libs/gdk-pixbuf
+	media-libs/fontconfig
+	media-libs/freetype
+	x11-libs/libX11
+	x11-libs/libSM
+	dev-libs/glib
+	sys-libs/zlib
+	virtual/libudev
+	>=sys-libs/glibc-2.27
 "
+
+DEPEND=""
 
 S="${WORKDIR}/VueScan"
 
 src_install() {
-    dobin vuescan
+	# Binary
+	exeinto /usr/local/bin
+	doexe vuescan
 
-    insinto /lib/udev/rules.d
-    newins vuescan.rul 60-vuescan.rules
+	# Icon
+	insinto /usr/share/icons/hicolor/scalable/apps
+	doins vuescan.svg
 
-    insinto /usr/share/icons/hicolor/scalable/apps
-    doins vuescan.svg
+	# Udev rule
+	insinto /lib/udev/rules.d
+	newins vuescan.rul 60-vuescan.rules
 
-    dodoc README.txt
-}
-
-pkg_postinst() {
-    udevadm control --reload-rules
-    xdg_icon_cache_update
-}
-
-pkg_postrm() {
-    xdg_icon_cache_update
+	# Optional: README
+	dodoc README.txt
 }
