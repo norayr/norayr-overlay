@@ -17,11 +17,11 @@ IUSE="aac alsa flac jack opus vorbis"
 DEPEND="
   x11-libs/fltk:1[static-libs]
   media-libs/portaudio
-  media-sound/portmidi
+  media-libs/portmidi
   media-sound/lame
   media-libs/libogg
   media-libs/libsamplerate
-  net-libs/libcurl
+  net-misc/curl
   dev-libs/openssl:=
   sys-apps/dbus
   alsa? ( media-libs/alsa-lib )
