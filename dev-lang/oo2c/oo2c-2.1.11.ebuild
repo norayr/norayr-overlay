@@ -30,19 +30,19 @@ RDEPEND="${DEPEND}"
 S="${WORKDIR}/oo2c_${ABI_BITS}-2.1.11"
 
 src_unpack() {
-  local archive
-
+  local tarball
   if use amd64 || use arm64 || use ppc64; then
-    archive="${DISTDIR}/oo2c-2.1.11-64bit.tar.bz2"
-    export ABI_BITS="64"
+    tarball="${DISTDIR}/oo2c-2.1.11-64bit.tar.bz2"
+    S="${WORKDIR}/oo2c_64-2.1.11"
   else
-    archive="${DISTDIR}/oo2c-2.1.11-32bit.tar.bz2"
-    export ABI_BITS="32"
+    tarball="${DISTDIR}/oo2c-2.1.11-32bit.tar.bz2"
+    S="${WORKDIR}/oo2c_32-2.1.11"
   fi
 
   mkdir -p "${WORKDIR}" || die
-  tar -xjf "${archive}" -C "${WORKDIR}" || die "Failed to unpack oo2c tarball"
+  tar -xjf "${tarball}" -C "${WORKDIR}" || die "Failed to unpack oo2c tarball"
 }
+
 
 src_configure() {
   local myconf=()
