@@ -22,7 +22,22 @@ IUSE="threads doc"
 RDEPEND="sys-libs/ncurses"
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/oo2c-2.1.11"
+src_unpack() {
+    default
+
+    case ${ARCH} in
+        amd64|arm64)
+            S="${WORKDIR}/oo2c_64-2.1.11"
+            ;;
+        x86|arm)
+            S="${WORKDIR}/oo2c_32-2.1.11"
+            ;;
+        *)
+            die "Unknown architecture ${ARCH}"
+            ;;
+    esac
+}
+
 
 
 src_prepare() {
