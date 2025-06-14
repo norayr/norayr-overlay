@@ -56,16 +56,21 @@ src_configure() {
 }
 
 src_compile() {
-    # Run make up to the point Makefile.ext is generated
-    emake -j1 dist
+    # Generate Makefile.ext using the provided Perl script
+    perl rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die "Failed to generate Makefile.ext"
 
-    # Inject -std=gnu99 into generated Makefile
-    einfo "Patching stage0/Makefile.ext to add -std=gnu99..."
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch stage0 Makefile"
+    # Minimal setup of stage0 sources
+    emake -j1 stage0/oo2c_setup
 
-    # Build stage0
+    # Patch Makefile.ext to fix C99 compliance
+    einfo "Injecting -std=gnu99 into stage0/Makefile.ext..."
+    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch Makefile.ext"
+
+    # Proceed with full build of stage0 compiler
     emake -j1 stage0/oo2c
 }
+
+
 
 src_install() {
     emake DESTDIR="${D}" install || die "install failed"
