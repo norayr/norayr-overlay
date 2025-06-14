@@ -16,12 +16,14 @@ SRC_URI="
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
+
 IUSE="threads doc"
 
 RDEPEND="sys-libs/ncurses"
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/oo2c_${ABI}-${PV}"
+S="${WORKDIR}/oo2c-2.1.11"
+
 
 src_prepare() {
     default
