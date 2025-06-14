@@ -56,8 +56,12 @@ src_configure() {
 
 src_compile() {
     if [[ -f stage0/Makefile ]]; then
+        einfo "Patching CFLAGS in stage0/Makefile"
         sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile || die "sed failed"
+    else
+        ewarn "stage0/Makefile not found, skipping sed patch"
     fi
+
   emake
 }
 
