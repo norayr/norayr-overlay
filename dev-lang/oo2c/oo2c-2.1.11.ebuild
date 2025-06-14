@@ -30,17 +30,17 @@ S="${WORKDIR}/oo2c_${ABI}-2.1.11"
 
 
 src_unpack() {
-	local abibits
-	if use amd64 || use arm64 || use ppc64; then
-		abibits="64"
-	else
-		abibits="32"
-	fi
+  local abibits
+  if use amd64 || use arm64 || use ppc64; then
+    abibits="64"
+  else
+    abibits="32"
+  fi
 
-	ABI="${abibits}" # Make it available globally
+  ABI="${abibits}" # Make it available globally
 
-	default  # Uses built-in unpack logic
-	S="${WORKDIR}/oo2c_${abibits}-2.1.11"
+  default  # Uses built-in unpack logic
+  S="${WORKDIR}/oo2c_${abibits}-2.1.11"
 }
 
 
@@ -53,17 +53,6 @@ src_configure() {
 
 }
 
-
-src_compile() {
-    if [[ -f stage0/Makefile ]]; then
-        einfo "Patching CFLAGS in stage0/Makefile"
-        sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile || die "sed failed"
-    else
-        ewarn "stage0/Makefile not found, skipping sed patch"
-    fi
-
-  emake
-}
 
 src_install() {
   default
