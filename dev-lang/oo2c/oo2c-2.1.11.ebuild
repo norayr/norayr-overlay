@@ -44,7 +44,7 @@ src_prepare() {
     default
     # Clean out leftovers if any
     rm -rf sym obj bin || die
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch Makefile.ext"
+    #sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch Makefile.ext"
 }
 
 src_configure() {
@@ -56,18 +56,15 @@ src_configure() {
 }
 
 src_compile() {
-    # Build the initial bootstrap compiler (stage0)
-    emake stage0/oo2c || die "bootstrap compiler failed"
+    # Run make up to the point Makefile.ext is generated
+    emake -j1 dist
 
-    # Patch Makefile.ext to use C99 standard for stage0 build
-    if [[ -f stage0/Makefile.ext ]]; then
-        sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile.ext || die "Failed to patch CFLAGS"
-    else
-        die "Makefile.ext not found; cannot patch"
-    fi
+    # Inject -std=gnu99 into generated Makefile
+    einfo "Patching stage0/Makefile.ext to add -std=gnu99..."
+    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch stage0 Makefile"
 
-    # Continue full build
-    emake || die "emake failed"
+    # Build stage0
+    emake -j1 stage0/oo2c
 }
 
 src_install() {
