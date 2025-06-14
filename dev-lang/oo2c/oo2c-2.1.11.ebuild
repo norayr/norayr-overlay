@@ -51,12 +51,13 @@ src_configure() {
 
     econf "${myconf[@]}"
 
-    # Patch CFLAGS in stage0/Makefile *after* it exists
-    sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile || die "sed failed"
 }
 
 
 src_compile() {
+    if [[ -f stage0/Makefile ]]; then
+        sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile || die "sed failed"
+    fi
   emake
 }
 
