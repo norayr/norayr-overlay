@@ -44,6 +44,7 @@ src_prepare() {
     default
     # Clean out leftovers if any
     rm -rf sym obj bin || die
+    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch Makefile.ext"
 }
 
 src_configure() {
