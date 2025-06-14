@@ -3,14 +3,13 @@ EAPI=8
 DESCRIPTION="Optimizing Oberon-2 to ANSI-C Translator (OO2C)"
 HOMEPAGE="https://ooc.sourceforge.net/"
 SRC_URI="
-    amd64? ( oo2c-2.1.11-64bit.tar.bz2 )
-    x86? ( oo2c-2.1.11-32bit.tar.bz2 )
-    arm64? ( oo2c-2.1.11-64bit.tar.bz2 )
-    arm? ( oo2c-2.1.11-32bit.tar.bz2 )
-    ppc? ( oo2c-2.1.11-32bit.tar.bz2 )
-    https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-64bit.tar.bz2
-    https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-32bit.tar.bz2
+    amd64?  ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-amd64.tar.bz2 )
+    x86?    ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-x86.tar.bz2 )
+    arm64?  ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-arm64.tar.bz2 )
+    arm?    ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-arm.tar.bz2 )
+    ppc?    ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-ppc.tar.bz2 )
 "
+
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -27,31 +26,35 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 # Select correct unpacked directory
-S="${WORKDIR}/oo2c_${ABI_BITS}-2.1.11"
+S="${WORKDIR}/oo2c_${ABI}-2.1.11"
+
 
 src_unpack() {
-  local tarball
-  if use amd64 || use arm64 || use ppc64; then
-    tarball="${DISTDIR}/oo2c-2.1.11-64bit.tar.bz2"
-    S="${WORKDIR}/oo2c_64-2.1.11"
-  else
-    tarball="${DISTDIR}/oo2c-2.1.11-32bit.tar.bz2"
-    S="${WORKDIR}/oo2c_32-2.1.11"
-  fi
+	local abibits
+	if use amd64 || use arm64 || use ppc64; then
+		abibits="64"
+	else
+		abibits="32"
+	fi
 
-  mkdir -p "${WORKDIR}" || die
-  tar -xjf "${tarball}" -C "${WORKDIR}" || die "Failed to unpack oo2c tarball"
+	ABI="${abibits}" # Make it available globally
+
+	default  # Uses built-in unpack logic
+	S="${WORKDIR}/oo2c_${abibits}-2.1.11"
 }
+
 
 src_configure() {
     local myconf=()
 
     use threads && myconf+=( --enable-threads=pthreads )
 
-    append-cflags -Wno-implicit-function-declaration
+    # Force older C standard to avoid implicit function error
+    append-cflags -std=gnu99
 
     econf "${myconf[@]}"
 }
+
 
 src_compile() {
   emake
