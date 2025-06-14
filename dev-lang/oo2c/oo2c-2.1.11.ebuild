@@ -28,6 +28,12 @@ RDEPEND="${DEPEND}"
 # Select correct unpacked directory
 S="${WORKDIR}/oo2c_${ABI}-2.1.11"
 
+src_prepare() {
+    default
+
+    # Ensure -std=gnu99 is added to stage0 CFLAGS
+    sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile || die "sed failed"
+}
 
 src_unpack() {
 	local abibits
