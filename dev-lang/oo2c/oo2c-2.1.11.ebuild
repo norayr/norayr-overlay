@@ -43,13 +43,14 @@ src_unpack() {
   tar -xjf "${tarball}" -C "${WORKDIR}" || die "Failed to unpack oo2c tarball"
 }
 
-
 src_configure() {
-  local myconf=()
+    local myconf=()
 
-  use threads && myconf+=( --enable-threads=pthreads )
+    use threads && myconf+=( --enable-threads=pthreads )
 
-  econf "${myconf[@]}"
+    append-cflags -Wno-implicit-function-declaration
+
+    econf "${myconf[@]}"
 }
 
 src_compile() {
