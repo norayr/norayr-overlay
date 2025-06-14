@@ -1,48 +1,33 @@
+# Copyright 2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
 EAPI=8
 
-DESCRIPTION="Optimizing Oberon-2 to ANSI-C Translator (OO2C)"
+DESCRIPTION="Oberon-2 to C translator and runtime system"
 HOMEPAGE="https://ooc.sourceforge.net/"
 SRC_URI="
-    amd64?  ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-amd64.tar.bz2 )
-    x86?    ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-x86.tar.bz2 )
-    arm64?  ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-arm64.tar.bz2 )
-    arm?    ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-arm.tar.bz2 )
-    ppc?    ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-ppc.tar.bz2 )
+    amd64? ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-amd64.tar.bz2 )
+    x86?   ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-x86.tar.bz2 )
+    arm64? ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_64-2.1.11.tar.bz2 -> oo2c-2.1.11-arm64.tar.bz2 )
+    arm?   ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-arm.tar.bz2 )
+    ppc?   ( https://downloads.sourceforge.net/project/ooc/ooc2/2.1.11/oo2c_32-2.1.11.tar.bz2 -> oo2c-2.1.11-ppc.tar.bz2 )
 "
-
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
+KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
 IUSE="threads doc"
 
-DEPEND="
-  dev-lang/perl
-  app-arch/tar
-  sys-devel/gcc
-  dev-libs/libxslt
-  threads? ( dev-libs/boehm-gc )
-"
-RDEPEND="${DEPEND}"
+RDEPEND="sys-libs/ncurses"
+DEPEND="${RDEPEND}"
 
-# Select correct unpacked directory
-S="${WORKDIR}/oo2c_${ABI}-2.1.11"
+S="${WORKDIR}/oo2c_${ABI}-${PV}"
 
-
-src_unpack() {
-  local abibits
-  if use amd64 || use arm64 || use ppc64; then
-    abibits="64"
-  else
-    abibits="32"
-  fi
-
-  ABI="${abibits}" # Make it available globally
-
-  default  # Uses built-in unpack logic
-  S="${WORKDIR}/oo2c_${abibits}-2.1.11"
+src_prepare() {
+    default
+    # Clean out leftovers if any
+    rm -rf sym obj bin || die
 }
-
 
 src_configure() {
     local myconf=()
@@ -50,22 +35,26 @@ src_configure() {
     use threads && myconf+=( --enable-threads=pthreads )
 
     econf "${myconf[@]}"
-
 }
 
+src_compile() {
+    # Build the initial bootstrap compiler (stage0)
+    emake stage0/oo2c || die "bootstrap compiler failed"
+
+    # Patch Makefile.ext to use C99 standard for stage0 build
+    if [[ -f stage0/Makefile.ext ]]; then
+        sed -i 's/^CFLAGS =/CFLAGS = -std=gnu99 /' stage0/Makefile.ext || die "Failed to patch CFLAGS"
+    else
+        die "Makefile.ext not found; cannot patch"
+    fi
+
+    # Continue full build
+    emake || die "emake failed"
+}
 
 src_install() {
-  default
-  dodoc README* INSTALL PROBLEMS
+    emake DESTDIR="${D}" install || die "install failed"
 
-  if use doc; then
-    docinto html
-    dodoc -r lib/oocdoc/html
-  fi
+    # Optional doc files
+    dodoc AUTHORS ChangeLog NEWS README* || die
 }
-
-pkg_postinst() {
-  elog "To enable garbage collection, install dev-libs/boehm-gc and re-emerge with USE=threads"
-}
-
-
