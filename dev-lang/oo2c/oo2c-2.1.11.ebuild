@@ -17,10 +17,12 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
 
-IUSE="threads doc"
+IUSE="+gc doc"
 
-RDEPEND="sys-libs/ncurses"
-DEPEND="${RDEPEND}"
+DEPEND="
+  sys-libs/ncurses
+  gc? ( dev-libs/boehm-gc )
+"
 
 src_unpack() {
     default
@@ -50,36 +52,42 @@ src_prepare() {
 src_configure() {
     local myconf=()
 
-    use threads && myconf+=( --enable-threads=pthreads )
+    if use gc; then
+        myconf+=( --with-gc )
+    else
+        myconf+=( --with-gc=no --enable-threads=none )
+    fi
 
     econf "${myconf[@]}"
 }
 
+
+
 src_compile() {
-    einfo "Ensuring makefilegen.pl is executable..."
-    chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die
+    # Make makefilegen.pl executable
+    chmod +x "${S}"/rsrc/OOC/makefilegen.pl || die "chmod failed"
 
-    einfo "Generating Makefile.ext..."
-    "${S}"/rsrc/OOC/makefilegen.pl > "${S}"/stage0/Makefile.ext || die "makefilegen.pl failed"
-    einfo "Generating Makefile.ext..."
+    # Generate Makefile.ext
     "${S}"/rsrc/OOC/makefilegen.pl > "${S}"/stage0/Makefile.ext || die "makefilegen.pl failed"
 
-    einfo "Patching oo2c_.c to include <oo2c.oh>..."
-    echo '#include <oo2c.oh>' >> "${S}"/obj/oo2c_.c || die "failed to patch oo2c_.c"
+    # Create necessary object dirs
+    mkdir -p "${S}"/stage0/obj "${S}"/stage0/lib/obj || die "mkdir failed"
 
-    einfo "Injecting -std=gnu99 into Makefile.ext..."
-    sed -i '/^CFLAGS[[:space:]]*=/{s/$/ -std=gnu99/;}' "${S}"/stage0/Makefile.ext || die "failed to inject -std=gnu99"
+    # Compile all .c files into .o to prepare for oo2c_.c
+    emake -j1 -f stage0/Makefile.ext stage0/obj/oo2c.c stage0/lib/obj/RT0.o
 
-    einfo "Injecting -lgc into oo2c link command..."
-    sed -i '/\$(CC).* -o oo2c /s/$/ -lgc/' "${S}"/stage0/Makefile.ext || die "failed to inject -lgc"
+    # Now generate oo2c_.c (needed for building final stage0 compiler)
+    emake -j1 -f stage0/Makefile.ext stage0/obj/oo2c_.c
 
-    einfo "Creating build directories..."
-    mkdir -p "${S}"/obj "${S}"/stage0/obj || die
+    # Patch it to include the missing header
+    sed -i '1i#include <oo2c.oh>' stage0/obj/oo2c_.c || die "patching oo2c_.c failed"
 
-    einfo "Building stage0/oo2c..."
-    emake -j1 -f "${S}/stage0/Makefile.ext" oo2c
+    # Inject -std=gnu99 into CFLAGS (if not already present)
+    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}"/stage0/Makefile.ext || die "patching CFLAGS failed"
+
+    # Finally build the stage0 oo2c binary
+    emake -j1 -f stage0/Makefile.ext oo2c
 }
-
 
 src_install() {
     emake DESTDIR="${D}" install || die "install failed"
