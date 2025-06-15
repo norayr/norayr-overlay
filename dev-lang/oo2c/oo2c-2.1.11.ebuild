@@ -64,36 +64,35 @@ src_configure() {
 
 
 src_compile() {
-    # Ensure makefile generator is executable
     chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die
 
-    # Generate Makefile.ext
+    # Generate Makefile.ext inside stage0
     einfo "Generating Makefile.ext..."
     cd "${S}/stage0" || die
     "${S}/rsrc/OOC/makefilegen.pl" > Makefile.ext || die "makefilegen.pl failed"
     cd "${S}" || die
 
-    # Patch missing header include for oo2c_.c
-    local cfile="obj/oo2c_.c"
-    if [[ -f "${cfile}" ]]; then
-        einfo "Patching ${cfile} to include <oo2c.oh>..."
-        echo '#include <oo2c.oh>' | cat - "${cfile}" > "${cfile}.patched" || die
-        mv "${cfile}.patched" "${cfile}" || die
+    # Make sure necessary object directories exist
+    mkdir -p obj lib/obj stage0/obj stage0/lib/obj || die "Failed to create required obj dirs"
+
+    # Patch oo2c_.c to include the proper header
+    if [[ -f obj/oo2c_.c ]]; then
+        einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
+        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die
+        mv obj/oo2c_.c.patched obj/oo2c_.c || die
     fi
 
-    # Make sure the obj dir exists for output
-    mkdir -p obj || die "Failed to create obj directory"
-
-    # Inject C99 requirement for GCC >=10 compatibility
+    # Add gnu99 to CFLAGS
     einfo "Injecting -std=gnu99 into Makefile.ext..."
     sed -i '/^CFLAGS[[:space:]]*=.*$/s/$/ -std=gnu99/' stage0/Makefile.ext || die "Failed to add -std=gnu99"
 
-    # Link against libgc if USE=gc is enabled
+    # Add -lgc to LDFLAGS if USE=gc
     use gc && sed -i '/^LDFLAGS[[:space:]]*=.*$/s/$/ -lgc/' stage0/Makefile.ext || die "Failed to add -lgc"
 
-    # Build stage0 compiler
-    emake -f stage0/Makefile.ext oo2c || die "Stage0 compiler build failed"
+    # Compile in stage0 directory with correct makefile
+    emake -C stage0 -f Makefile.ext oo2c || die "Stage0 compiler build failed"
 }
+
 
 
 src_install() {
