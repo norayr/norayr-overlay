@@ -57,23 +57,24 @@ src_configure() {
 
 src_compile() {
     einfo "Generating Makefile.ext..."
-    perl "${S}/rsrc/OOC/makefilegen.pl" > "${S}/stage0/Makefile.ext" || die "failed to generate Makefile.ext"
+    "${S}"/rsrc/OOC/makefilegen.pl > "${S}"/stage0/Makefile.ext || die "makefilegen.pl failed"
 
     einfo "Patching oo2c_.c to include <oo2c.oh>..."
-    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die "failed to patch include"
-
-    einfo "Fixing Makefile.ext path to oo2c_.c..."
-    sed -i 's|\bobj/oo2c_.c\b|stage0/obj/oo2c_.c|g' "${S}/stage0/Makefile.ext" || die "failed to fix path to oo2c_.c"
-    sed -i 's|\bobj/oo2c_.o\b|stage0/obj/oo2c_.o|g' "${S}/stage0/Makefile.ext" || die "failed to fix path to oo2c_.o"
+    echo '#include <oo2c.oh>' >> "${S}"/obj/oo2c_.c || die "failed to patch oo2c_.c"
 
     einfo "Injecting -std=gnu99 into Makefile.ext..."
-    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}/stage0/Makefile.ext" || die "CFLAGS patch failed"
+    sed -i '/^CFLAGS[[:space:]]*=/{s/$/ -std=gnu99/;}' "${S}"/stage0/Makefile.ext || die "failed to inject -std=gnu99"
+
+    einfo "Injecting -lgc into oo2c link command..."
+    sed -i '/\$(CC).* -o oo2c /s/$/ -lgc/' "${S}"/stage0/Makefile.ext || die "failed to inject -lgc"
+
+    einfo "Creating build directories..."
+    mkdir -p "${S}"/obj "${S}"/stage0/obj || die
 
     einfo "Building stage0/oo2c..."
-    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0 build failed"
-
-    emake -j1 || die "full build failed"
+    emake -j1 -f "${S}/stage0/Makefile.ext" oo2c
 }
+
 
 src_install() {
     emake DESTDIR="${D}" install || die "install failed"
