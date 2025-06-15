@@ -75,12 +75,15 @@ src_compile() {
     # Make sure necessary object directories exist
     mkdir -p obj lib/obj stage0/obj stage0/lib/obj || die "Failed to create required obj dirs"
 
-    # Patch oo2c_.c to include the proper header
-    if [[ -f obj/oo2c_.c ]]; then
-        einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
-        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die
-        mv obj/oo2c_.c.patched obj/oo2c_.c || die
-    fi
+# Ensure obj/oo2c_.c exists before patching
+if [[ -f "${S}/stage0/obj/oo2c_.c" ]]; then
+    einfo "Injecting '#include <oo2c.oh>' into obj/oo2c_.c..."
+    grep -q 'oo2c\.oh' "${S}/stage0/obj/oo2c_.c" || \
+        sed -i '1i#include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die "Failed to patch obj/oo2c_.c"
+else
+    ewarn "obj/oo2c_.c not found at patch time; build may fail!"
+fi
+
 
     # Add gnu99 to CFLAGS
     einfo "Injecting -std=gnu99 into Makefile.ext..."
