@@ -56,19 +56,18 @@ src_configure() {
 }
 
 src_compile() {
-    # Generate Makefile.ext using the provided Perl script
-    perl rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die "Failed to generate Makefile.ext"
+    emake -j1 -C stage0 -f ../rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die
 
-    # Minimal setup of stage0 sources
-    emake -j1 stage0/oo2c_setup
+    # Insert missing include to avoid implicit declaration
+    einfo "Patching stage0/obj/oo2c_.c to include <oo2c.oh>..."
+    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' stage0/obj/oo2c_.c || die "could not inject include"
 
-    # Patch Makefile.ext to fix C99 compliance
-    einfo "Injecting -std=gnu99 into stage0/Makefile.ext..."
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to patch Makefile.ext"
+    # Inject C99 compliance (optional, helps with other functions)
+    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to add -std=gnu99"
 
-    # Proceed with full build of stage0 compiler
-    emake -j1 stage0/oo2c
+    emake -j1 -C stage0 -f stage0/Makefile.ext oo2c || die "stage0 failed"
 }
+
 
 
 
