@@ -60,19 +60,17 @@ src_compile() {
     perl "${S}/rsrc/OOC/makefilegen.pl" > "${S}/stage0/Makefile.ext" || die "failed to generate Makefile.ext"
 
     einfo "Patching oo2c_.c to include <oo2c.oh>..."
-    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die
+    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die "patch failed"
 
     einfo "Injecting -std=gnu99 into Makefile.ext..."
-    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}/stage0/Makefile.ext" || die
+    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}/stage0/Makefile.ext" || die "CFLAGS patch failed"
 
     einfo "Building stage0/oo2c..."
-    emake -j1 -f stage0/Makefile.ext stage0/oo2c || die "stage0 build failed"
+    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0 build failed"
 
-    # Continue full build
+    # Continue with full build
     emake -j1 || die "full build failed"
 }
-
-
 
 src_install() {
     emake DESTDIR="${D}" install || die "install failed"
