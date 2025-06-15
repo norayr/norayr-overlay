@@ -64,30 +64,37 @@ src_configure() {
 
 
 src_compile() {
-    # Make makefilegen.pl executable
-    chmod +x "${S}"/rsrc/OOC/makefilegen.pl || die "chmod failed"
+    # Ensure makefile generator is executable
+    chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die
 
     # Generate Makefile.ext
-    "${S}"/rsrc/OOC/makefilegen.pl > "${S}"/stage0/Makefile.ext || die "makefilegen.pl failed"
+    einfo "Generating Makefile.ext..."
+    cd "${S}/stage0" || die
+    "${S}/rsrc/OOC/makefilegen.pl" > Makefile.ext || die "makefilegen.pl failed"
+    cd "${S}" || die
 
-    # Create necessary object dirs
-    mkdir -p "${S}"/stage0/obj "${S}"/stage0/lib/obj || die "mkdir failed"
+    # Patch missing header include for oo2c_.c
+    local cfile="obj/oo2c_.c"
+    if [[ -f "${cfile}" ]]; then
+        einfo "Patching ${cfile} to include <oo2c.oh>..."
+        echo '#include <oo2c.oh>' | cat - "${cfile}" > "${cfile}.patched" || die
+        mv "${cfile}.patched" "${cfile}" || die
+    fi
 
-    # Compile all .c files into .o to prepare for oo2c_.c
-    emake -j1 -f stage0/Makefile.ext stage0/obj/oo2c.c stage0/lib/obj/RT0.o
+    # Make sure the obj dir exists for output
+    mkdir -p obj || die "Failed to create obj directory"
 
-    # Now generate oo2c_.c (needed for building final stage0 compiler)
-    emake -j1 -f stage0/Makefile.ext stage0/obj/oo2c_.c
+    # Inject C99 requirement for GCC >=10 compatibility
+    einfo "Injecting -std=gnu99 into Makefile.ext..."
+    sed -i '/^CFLAGS[[:space:]]*=.*$/s/$/ -std=gnu99/' stage0/Makefile.ext || die "Failed to add -std=gnu99"
 
-    # Patch it to include the missing header
-    sed -i '1i#include <oo2c.oh>' stage0/obj/oo2c_.c || die "patching oo2c_.c failed"
+    # Link against libgc if USE=gc is enabled
+    use gc && sed -i '/^LDFLAGS[[:space:]]*=.*$/s/$/ -lgc/' stage0/Makefile.ext || die "Failed to add -lgc"
 
-    # Inject -std=gnu99 into CFLAGS (if not already present)
-    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}"/stage0/Makefile.ext || die "patching CFLAGS failed"
-
-    # Finally build the stage0 oo2c binary
-    emake -j1 -f stage0/Makefile.ext oo2c
+    # Build stage0 compiler
+    emake -f stage0/Makefile.ext oo2c || die "Stage0 compiler build failed"
 }
+
 
 src_install() {
     emake DESTDIR="${D}" install || die "install failed"
