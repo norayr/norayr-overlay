@@ -55,7 +55,7 @@ src_configure() {
     if use gc; then
         myconf+=( --with-gc )
     else
-        myconf+=( --with-gc=no --enable-threads=none )
+        myconf+=( --without-gc --enable-threads=none )
     fi
 
     econf "${myconf[@]}"
