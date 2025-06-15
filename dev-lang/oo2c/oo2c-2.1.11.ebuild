@@ -56,6 +56,11 @@ src_configure() {
 }
 
 src_compile() {
+    einfo "Ensuring makefilegen.pl is executable..."
+    chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die
+
+    einfo "Generating Makefile.ext..."
+    "${S}"/rsrc/OOC/makefilegen.pl > "${S}"/stage0/Makefile.ext || die "makefilegen.pl failed"
     einfo "Generating Makefile.ext..."
     "${S}"/rsrc/OOC/makefilegen.pl > "${S}"/stage0/Makefile.ext || die "makefilegen.pl failed"
 
