@@ -66,11 +66,12 @@ src_compile() {
     sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}/stage0/Makefile.ext" || die
 
     einfo "Building stage0/oo2c..."
-    emake -j1 -C "${S}/stage0" -f Makefile.ext oo2c || die "stage0 build failed"
+    emake -j1 -f stage0/Makefile.ext stage0/oo2c || die "stage0 build failed"
 
-    # Continue with regular build
+    # Continue full build
     emake -j1 || die "full build failed"
 }
+
 
 
 src_install() {
