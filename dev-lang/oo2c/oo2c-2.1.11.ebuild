@@ -56,19 +56,21 @@ src_configure() {
 }
 
 src_compile() {
-    emake -j1 -C stage0 -f ../rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die
+    einfo "Generating Makefile.ext..."
+    perl "${S}/rsrc/OOC/makefilegen.pl" > "${S}/stage0/Makefile.ext" || die "failed to generate Makefile.ext"
 
-    # Insert missing include to avoid implicit declaration
-    einfo "Patching stage0/obj/oo2c_.c to include <oo2c.oh>..."
-    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' stage0/obj/oo2c_.c || die "could not inject include"
+    einfo "Patching oo2c_.c to include <oo2c.oh>..."
+    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die
 
-    # Inject C99 compliance (optional, helps with other functions)
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "failed to add -std=gnu99"
+    einfo "Injecting -std=gnu99 into Makefile.ext..."
+    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}/stage0/Makefile.ext" || die
 
-    emake -j1 -C stage0 -f stage0/Makefile.ext oo2c || die "stage0 failed"
+    einfo "Building stage0/oo2c..."
+    emake -j1 -C "${S}/stage0" -f Makefile.ext oo2c || die "stage0 build failed"
+
+    # Continue with regular build
+    emake -j1 || die "full build failed"
 }
-
-
 
 
 src_install() {
