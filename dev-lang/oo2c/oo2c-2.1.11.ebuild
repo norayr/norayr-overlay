@@ -19,10 +19,11 @@ KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
 
 IUSE="+gc doc"
 
-DEPEND="
+RDEPEND="
   sys-libs/ncurses
   gc? ( dev-libs/boehm-gc )
 "
+DEPEND="${RDEPEND}"
 
 src_unpack() {
     default
@@ -89,8 +90,15 @@ fi
     einfo "Injecting -std=gnu99 into Makefile.ext..."
     sed -i '/^CFLAGS[[:space:]]*=.*$/s/$/ -std=gnu99/' stage0/Makefile.ext || die "Failed to add -std=gnu99"
 
-    # Add -lgc to LDFLAGS if USE=gc
-    use gc && sed -i '/^LDFLAGS[[:space:]]*=.*$/s/$/ -lgc/' stage0/Makefile.ext || die "Failed to add -lgc"
+     if use gc; then
+        einfo "Enabling Boehm GC support..."
+
+        # Add -lgc to the link line in Makefile.ext if it's not already there
+        if ! grep -q '\-lgc' "${S}/stage0/Makefile.ext"; then
+            sed -i '/^oo2c:/s/$/ -lgc/' "${S}/stage0/Makefile.ext" || die "Failed to add -lgc"
+        fi
+    fi
+
 
     # Compile in stage0 directory with correct makefile
     emake -C stage0 -f Makefile.ext oo2c || die "Stage0 compiler build failed"
