@@ -53,11 +53,10 @@ src_prepare() {
 src_configure() {
     local myconf=()
 
-    if use gc; then
-        myconf+=( --with-gc )
-    else
-        myconf+=( --disable-gc --enable-threads=none )
-    fi
+econf \
+    $(use_enable gc) \
+    $(usev !gc && echo "--disable-gc")
+
 
     econf "${myconf[@]}"
 }
@@ -90,13 +89,18 @@ fi
     einfo "Injecting -std=gnu99 into Makefile.ext..."
     sed -i '/^CFLAGS[[:space:]]*=.*$/s/$/ -std=gnu99/' stage0/Makefile.ext || die "Failed to add -std=gnu99"
 
-     if use gc; then
-        einfo "Enabling Boehm GC support..."
+# Inject Boehm GC linking if USE=gc
+    if use gc; then
+        einfo "Injecting -lgc and -L/usr/lib64 if needed..."
 
-        # Add -lgc to the link line in Makefile.ext if it's not already there
-        if ! grep -q '\-lgc' "${S}/stage0/Makefile.ext"; then
-            sed -i '/^oo2c:/s/$/ -lgc/' "${S}/stage0/Makefile.ext" || die "Failed to add -lgc"
-        fi
+        # Ensure -lgc is added to the oo2c link line
+        grep -q '\-lgc' stage0/Makefile.ext || \
+            sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' stage0/Makefile.ext || die "Failed to add -lgc"
+
+        # Just in case: ensure linker can see libgc in /usr/lib64 (especially on multilib systems)
+        grep -q '/usr/lib64' stage0/Makefile.ext || \
+            sed -i '/^LDFLAGS[[:space:]]*=/ s/$/ -L\/usr\/lib64/' stage0/Makefile.ext || \
+            echo 'LDFLAGS += -L/usr/lib64' >> stage0/Makefile.ext
     fi
 
 
