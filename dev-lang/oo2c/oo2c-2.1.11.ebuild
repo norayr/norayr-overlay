@@ -17,7 +17,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
 
-IUSE="+gc doc"
+IUSE="gc doc"
 
 RDEPEND="
   sys-libs/ncurses
@@ -64,49 +64,42 @@ econf \
 
 
 src_compile() {
-    chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die
+    chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die "makefilegen.pl not executable"
+    einfo "Generating stage0/Makefile.ext..."
+    emake -j1 -f rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die "Makefile.ext generation failed"
 
-    # Generate Makefile.ext inside stage0
-    einfo "Generating Makefile.ext..."
-    cd "${S}/stage0" || die
-    "${S}/rsrc/OOC/makefilegen.pl" > Makefile.ext || die "makefilegen.pl failed"
-    cd "${S}" || die
+    einfo "Injecting -std=gnu99..."
+    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "CFLAGS patch failed"
 
-    # Make sure necessary object directories exist
-    mkdir -p obj lib/obj stage0/obj stage0/lib/obj || die "Failed to create required obj dirs"
-
-# Ensure obj/oo2c_.c exists before patching
-if [[ -f "${S}/stage0/obj/oo2c_.c" ]]; then
-    einfo "Injecting '#include <oo2c.oh>' into obj/oo2c_.c..."
-    grep -q 'oo2c\.oh' "${S}/stage0/obj/oo2c_.c" || \
-        sed -i '1i#include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die "Failed to patch obj/oo2c_.c"
-else
-    ewarn "obj/oo2c_.c not found at patch time; build may fail!"
-fi
-
-
-    # Add gnu99 to CFLAGS
-    einfo "Injecting -std=gnu99 into Makefile.ext..."
-    sed -i '/^CFLAGS[[:space:]]*=.*$/s/$/ -std=gnu99/' stage0/Makefile.ext || die "Failed to add -std=gnu99"
-
-# Inject Boehm GC linking if USE=gc
     if use gc; then
-        einfo "Injecting -lgc and -L/usr/lib64 if needed..."
-
-        # Ensure -lgc is added to the oo2c link line
+        einfo "Injecting -lgc and -L/usr/lib64..."
         grep -q '\-lgc' stage0/Makefile.ext || \
-            sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' stage0/Makefile.ext || die "Failed to add -lgc"
-
-        # Just in case: ensure linker can see libgc in /usr/lib64 (especially on multilib systems)
-        grep -q '/usr/lib64' stage0/Makefile.ext || \
-            sed -i '/^LDFLAGS[[:space:]]*=/ s/$/ -L\/usr\/lib64/' stage0/Makefile.ext || \
-            echo 'LDFLAGS += -L/usr/lib64' >> stage0/Makefile.ext
+            sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' stage0/Makefile.ext || die "Failed to patch -lgc"
+        sed -i '/^LDFLAGS[[:space:]]*=/ s|$| -L/usr/lib64|' stage0/Makefile.ext || echo 'LDFLAGS += -L/usr/lib64' >> stage0/Makefile.ext
     fi
 
+    einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
+    echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die "Failed to patch oo2c_.c"
+    mv obj/oo2c_.c.patched obj/oo2c_.c || die "Failed to overwrite oo2c_.c"
 
-    # Compile in stage0 directory with correct makefile
-    emake -C stage0 -f Makefile.ext oo2c || die "Stage0 compiler build failed"
+    einfo "Building stage0/oo2c..."
+    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0/oo2c build failed"
+
+    einfo "Generating Makefile.ext for final build..."
+    emake -j1 -f rsrc/OOC/makefilegen.pl > Makefile.ext || die "final Makefile.ext generation failed"
+
+    einfo "Injecting final build flags..."
+    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' Makefile.ext || die "CFLAGS patch failed"
+    if use gc; then
+        grep -q '\-lgc' Makefile.ext || \
+            sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' Makefile.ext || die "Failed to patch -lgc"
+        sed -i '/^LDFLAGS[[:space:]]*=/ s|$| -L/usr/lib64|' Makefile.ext || echo 'LDFLAGS += -L/usr/lib64' >> Makefile.ext
+    fi
+
+    einfo "Building final oo2c binary..."
+    emake -j1 -f Makefile.ext || die "final build failed"
 }
+
 
 
 
