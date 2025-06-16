@@ -62,42 +62,33 @@ econf \
 }
 
 
-
 src_compile() {
     chmod +x rsrc/OOC/makefilegen.pl || die
 
-    # Generate Makefile for stage0
     einfo "Generating stage0/Makefile.ext..."
-    rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die "makefilegen failed"
+    rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die
 
-    # Ensure required directories exist
     mkdir -p obj stage0/obj stage0/lib/obj || die
 
-    # Patch CFLAGS for C99 compliance
+    # Force -std=gnu99 for old code
     sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die
 
-    # Build the stage0 compiler
-    einfo "Building stage0 compiler..."
-    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0 compiler build failed"
+    einfo "Building stage0 compiler (oo2c)..."
+    emake -j1 -f stage0/Makefile.ext stage0/obj/oo2c.o || die "failed to build stage0 oo2c"
 
-    # Use stage0 compiler to build obj/oo2c_.c
-    einfo "Using stage0 compiler to build obj/oo2c_.c..."
-    ./stage0/oo2c -c -I. src/oo2c.Mod || die "stage1 compilation of oo2c.Mod failed"
+    einfo "Generating obj/oo2c_.c using stage0/oo2c..."
+    ./stage0/oo2c -c -I. src/oo2c.Mod || die "stage1 generation of obj/oo2c_.c failed"
 
-    # Inject #include to fix missing headers
     echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die
     mv obj/oo2c_.c.patched obj/oo2c_.c || die
 
-    # Generate final Makefile
-    einfo "Generating final Makefile.ext..."
-    rsrc/OOC/makefilegen.pl > Makefile.ext || die "final makefilegen failed"
+    einfo "Generating Makefile.ext for final build..."
+    rsrc/OOC/makefilegen.pl > Makefile.ext || die
     sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' Makefile.ext || die
 
-    # Compile final oo2c binary
-    einfo "Building final oo2c binary..."
-    emake -j1 -f Makefile.ext oo2c || die "final oo2c build failed"
+    einfo "Compiling final oo2c binary..."
+    emake -j1 -f Makefile.ext oo2c || die "final build failed"
 }
-
 
 
 
