@@ -98,6 +98,15 @@ src_compile() {
             sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' Makefile.ext || die "Failed to patch -lgc"
         sed -i '/^LDFLAGS[[:space:]]*=/ s|$| -L/usr/lib64|' Makefile.ext || echo 'LDFLAGS += -L/usr/lib64' >> Makefile.ext
     fi
+   einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
+    mkdir -p obj || die "failed to create obj directory"
+    if [[ -f obj/oo2c_.c ]]; then
+        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.tmp && \
+        mv obj/oo2c_.c.tmp obj/oo2c_.c || die "Failed to patch obj/oo2c_.c"
+    fi
+
+    einfo "Building stage0/oo2c..."
+    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0/oo2c build failed"
 
     einfo "Building final oo2c binary..."
     emake -j1 -f Makefile.ext || die "Final build failed"
