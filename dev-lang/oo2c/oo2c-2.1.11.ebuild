@@ -65,10 +65,11 @@ econf \
 
 src_compile() {
     chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die "makefilegen.pl not executable"
-    einfo "Generating stage0/Makefile.ext..."
-    emake -j1 -f rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die "Makefile.ext generation failed"
 
-    einfo "Injecting -std=gnu99..."
+    einfo "Generating stage0/Makefile.ext..."
+    "${S}/rsrc/OOC/makefilegen.pl" > stage0/Makefile.ext || die "Makefile.ext generation failed"
+
+    einfo "Injecting -std=gnu99 into stage0/Makefile.ext..."
     sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "CFLAGS patch failed"
 
     if use gc; then
@@ -79,16 +80,18 @@ src_compile() {
     fi
 
     einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
-    echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die "Failed to patch oo2c_.c"
-    mv obj/oo2c_.c.patched obj/oo2c_.c || die "Failed to overwrite oo2c_.c"
+    if [[ -f obj/oo2c_.c ]]; then
+        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.tmp && \
+        mv obj/oo2c_.c.tmp obj/oo2c_.c || die "Failed to patch obj/oo2c_.c"
+    fi
 
     einfo "Building stage0/oo2c..."
     emake -j1 -f stage0/Makefile.ext oo2c || die "stage0/oo2c build failed"
 
     einfo "Generating Makefile.ext for final build..."
-    emake -j1 -f rsrc/OOC/makefilegen.pl > Makefile.ext || die "final Makefile.ext generation failed"
+    "${S}/rsrc/OOC/makefilegen.pl" > Makefile.ext || die "Makefile.ext generation failed"
 
-    einfo "Injecting final build flags..."
+    einfo "Injecting build flags into final Makefile.ext..."
     sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' Makefile.ext || die "CFLAGS patch failed"
     if use gc; then
         grep -q '\-lgc' Makefile.ext || \
@@ -97,8 +100,9 @@ src_compile() {
     fi
 
     einfo "Building final oo2c binary..."
-    emake -j1 -f Makefile.ext || die "final build failed"
+    emake -j1 -f Makefile.ext || die "Final build failed"
 }
+
 
 
 
