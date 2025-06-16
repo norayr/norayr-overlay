@@ -64,52 +64,35 @@ econf \
 
 
 src_compile() {
-    chmod +x "${S}/rsrc/OOC/makefilegen.pl" || die "makefilegen.pl not executable"
+    # Make sure the makefile generator is executable
+    chmod +x rsrc/OOC/makefilegen.pl || die
 
+    # Generate stage0 Makefile
     einfo "Generating stage0/Makefile.ext..."
-    "${S}/rsrc/OOC/makefilegen.pl" > stage0/Makefile.ext || die "Makefile.ext generation failed"
+    rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die "makefilegen.pl failed"
 
-    einfo "Injecting -std=gnu99 into stage0/Makefile.ext..."
+    # Patch Makefile.ext to use C99
     sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die "CFLAGS patch failed"
 
-    if use gc; then
-        einfo "Injecting -lgc and -L/usr/lib64..."
-        grep -q '\-lgc' stage0/Makefile.ext || \
-            sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' stage0/Makefile.ext || die "Failed to patch -lgc"
-        sed -i '/^LDFLAGS[[:space:]]*=/ s|$| -L/usr/lib64|' stage0/Makefile.ext || echo 'LDFLAGS += -L/usr/lib64' >> stage0/Makefile.ext
-    fi
+    # Create required directories
+    mkdir -p obj stage0/obj stage0/lib/obj || die "failed to create build directories"
 
-    einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
+    # Generate obj/oo2c_.c via setup
+    einfo "Building stage0/oo2c_setup to generate obj/oo2c_.c..."
+    emake -j1 -f stage0/Makefile.ext stage0/oo2c_setup || die "oo2c_setup failed"
+
+    # Patch the generated source
     if [[ -f obj/oo2c_.c ]]; then
-        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.tmp && \
-        mv obj/oo2c_.c.tmp obj/oo2c_.c || die "Failed to patch obj/oo2c_.c"
+        einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
+        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die
+        mv obj/oo2c_.c.patched obj/oo2c_.c || die
+    else
+        die "obj/oo2c_.c was not generated"
     fi
 
-    einfo "Building stage0/oo2c..."
-    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0/oo2c build failed"
-
-    einfo "Generating Makefile.ext for final build..."
-    "${S}/rsrc/OOC/makefilegen.pl" > Makefile.ext || die "Makefile.ext generation failed"
-
-    einfo "Injecting build flags into final Makefile.ext..."
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' Makefile.ext || die "CFLAGS patch failed"
-    if use gc; then
-        grep -q '\-lgc' Makefile.ext || \
-            sed -i '/^oo2c[[:space:]]*:/ s/$/ -lgc/' Makefile.ext || die "Failed to patch -lgc"
-        sed -i '/^LDFLAGS[[:space:]]*=/ s|$| -L/usr/lib64|' Makefile.ext || echo 'LDFLAGS += -L/usr/lib64' >> Makefile.ext
-    fi
-   einfo "Patching obj/oo2c_.c to include <oo2c.oh>..."
-    mkdir -p obj || die "failed to create obj directory"
-    if [[ -f obj/oo2c_.c ]]; then
-        echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.tmp && \
-        mv obj/oo2c_.c.tmp obj/oo2c_.c || die "Failed to patch obj/oo2c_.c"
-    fi
-
-    einfo "Building stage0/oo2c..."
-    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0/oo2c build failed"
-
-    einfo "Building final oo2c binary..."
-    emake -j1 -f Makefile.ext || die "Final build failed"
+    # Compile the full compiler binary
+    einfo "Compiling oo2c..."
+    emake -j1 -f stage0/Makefile.ext oo2c || die "oo2c compile failed"
 }
 
 
