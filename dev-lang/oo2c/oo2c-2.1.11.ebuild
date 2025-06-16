@@ -63,33 +63,24 @@ econf \
 
 
 src_compile() {
-    chmod +x rsrc/OOC/makefilegen.pl || die
+    einfo "Generating Makefile.ext..."
+    perl "${S}/rsrc/OOC/makefilegen.pl" > "${S}/stage0/Makefile.ext" || die "failed to generate Makefile.ext"
 
-    einfo "Generating stage0/Makefile.ext..."
-    rsrc/OOC/makefilegen.pl > stage0/Makefile.ext || die
+    einfo "Patching oo2c_.c to include <oo2c.oh>..."
+    sed -i '/#include <RT0.oh>/a #include <oo2c.oh>' "${S}/stage0/obj/oo2c_.c" || die "failed to patch include"
 
-    mkdir -p obj stage0/obj stage0/lib/obj || die
+    einfo "Fixing Makefile.ext path to oo2c_.c..."
+    sed -i 's|\bobj/oo2c_.c\b|stage0/obj/oo2c_.c|g' "${S}/stage0/Makefile.ext" || die "failed to fix path to oo2c_.c"
+    sed -i 's|\bobj/oo2c_.o\b|stage0/obj/oo2c_.o|g' "${S}/stage0/Makefile.ext" || die "failed to fix path to oo2c_.o"
 
-    # Force -std=gnu99 for old code
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' stage0/Makefile.ext || die
+    einfo "Injecting -std=gnu99 into Makefile.ext..."
+    sed -i '/^CFLAGS[[:space:]]*=/ s|$| -std=gnu99|' "${S}/stage0/Makefile.ext" || die "CFLAGS patch failed"
 
-    einfo "Building stage0 compiler (oo2c)..."
-    emake -j1 -f stage0/Makefile.ext stage0/obj/oo2c.o || die "failed to build stage0 oo2c"
+    einfo "Building stage0/oo2c..."
+    emake -j1 -f stage0/Makefile.ext oo2c || die "stage0 build failed"
 
-    einfo "Generating obj/oo2c_.c using stage0/oo2c..."
-    ./stage0/oo2c -c -I. src/oo2c.Mod || die "stage1 generation of obj/oo2c_.c failed"
-
-    echo '#include <oo2c.oh>' | cat - obj/oo2c_.c > obj/oo2c_.c.patched || die
-    mv obj/oo2c_.c.patched obj/oo2c_.c || die
-
-    einfo "Generating Makefile.ext for final build..."
-    rsrc/OOC/makefilegen.pl > Makefile.ext || die
-    sed -i '/^CFLAGS[[:space:]]*=/ s/$/ -std=gnu99/' Makefile.ext || die
-
-    einfo "Compiling final oo2c binary..."
-    emake -j1 -f Makefile.ext oo2c || die "final build failed"
+    emake -j1 || die "full build failed"
 }
-
 
 
 src_install() {
