@@ -32,8 +32,6 @@ src_compile() {
     export VOC_INSTALLDIR="/opt/voc"
     emake full
 
-IUSE="ocat"
-
 src_compile() {
     emake full
 
