@@ -32,8 +32,20 @@ src_compile() {
     export VOC_INSTALLDIR="/opt/voc"
     emake full
 
-    if use ocat; then
-        "${S}/voc" -m src/tools/ocat/OCatCmd.Mod || die "Failed to build OCatCmd"
+     if use ocat; then
+        # Extract build flavour variables from Configuration.Make
+        local os datamodel compiler
+        os=$(grep '^OS *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
+        datamodel=$(grep '^DATAMODEL *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
+        compiler=$(grep '^COMPILER *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
+
+        local flavour="${os}.${datamodel}.${compiler}"
+        local symdir="${S}/build/${flavour}"
+        local voc="${S}/voc"
+
+        cd "${symdir}" || die
+        "${voc}" -m "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+        cd "${OLDPWD}" || die
     fi
 }
 
