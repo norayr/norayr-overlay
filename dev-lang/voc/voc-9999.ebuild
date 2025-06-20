@@ -32,8 +32,8 @@ src_compile() {
     export VOC_INSTALLDIR="/opt/voc"
     emake full
 
-     if use ocat; then
-        # Extract build flavour from Configuration.Make
+    if use ocat; then
+        # Dynamically determine build flavour from Configuration.Make
         local os datamodel compiler
         os=$(grep '^OS *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
         datamodel=$(grep '^DATAMODEL *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
@@ -43,14 +43,14 @@ src_compile() {
         local builddir="${S}/build/${flavour}"
         local voc="${S}/voc"
 
-        # Add proper lib/include for linker
-        export CFLAGS="-L${builddir}/2 -I${builddir}/2/include"
+        # Point to correct lib/include dirs
+        export CFLAGS="-O2 -pipe -march=native -I${builddir}/2 -L${builddir}/2"
 
-        # Change to .sym directory and build statically linked 'ocat'
         cd "${builddir}" || die
         "${voc}" -M -m "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
         cd "${OLDPWD}" || die
     fi
+
 }
 
 src_install() {
