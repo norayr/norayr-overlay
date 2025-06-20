@@ -36,7 +36,6 @@ src_compile() {
     emake full
 
     if use ocat; then
-        # Extract platform-specific build flavour
         local os datamodel compiler
         os=$(grep '^OS *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
         datamodel=$(grep '^DATAMODEL *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
@@ -50,6 +49,7 @@ src_compile() {
 
         cd "${symdir}" || die
         "${voc}" -M -m "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+        cp OCatCmd "${S}/OCatCmd" || die "Could not move OCatCmd binary for install"
         cd "${OLDPWD}" || die
     fi
 }
