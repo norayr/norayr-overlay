@@ -40,7 +40,7 @@ src_compile() {
         compiler=$(grep '^COMPILER *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
 
         local flavour="${os}.${datamodel}.${compiler}"
-        local symdir="${S}/build/${flavour}"
+        local symdir="${S}/build/${flavour}/2"
         local voc="${S}/voc"
 
         cd "${symdir}" || die
