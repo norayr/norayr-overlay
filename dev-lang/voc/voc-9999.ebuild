@@ -48,7 +48,8 @@ src_compile() {
         export CFLAGS="-O2 -pipe -I${symdir} -L${symdir}"
 
         cd "${symdir}" || die
-        "${voc}" -M "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+        #"${voc}" -M "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+         "${voc}" -M "../../../src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
         cp OCatCmd "${S}/OCatCmd" || die "Could not move OCatCmd binary for install"
         cd "${OLDPWD}" || die
     fi
