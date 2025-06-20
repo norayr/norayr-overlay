@@ -7,7 +7,7 @@ EGIT_REPO_URI="https://github.com/vishapoberon/compiler.git"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS=""
-IUSE="+gcc clang tcc"
+IUSE="+gcc clang tcc ocat"
 
 REQUIRED_USE="^^ ( gcc clang tcc )"
 
@@ -31,6 +31,10 @@ src_compile() {
 
     export VOC_INSTALLDIR="/opt/voc"
     emake full
+
+    if use ocat; then
+        voc -m src/tools/ocat/OCatCmd.Mod || die "Failed to build OCatCmd"
+    fi
 }
 
 src_install() {
@@ -45,6 +49,10 @@ src_install() {
     # Symlinks
     dosym "${instdir}/bin/voc" /usr/bin/voc
     dosym "${instdir}/bin/showdef" /usr/bin/showdef
+
+    if use ocat; then
+        newbin OCatCmd ocat
+    fi
 
     # Register the library path via env.d
     cat > "${T}/90voc" <<EOF
