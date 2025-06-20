@@ -32,8 +32,6 @@ src_compile() {
     export VOC_INSTALLDIR="/opt/voc"
     emake full
 
-src_compile() {
-    emake full
 
     if use ocat; then
         local os datamodel compiler
@@ -54,7 +52,7 @@ src_compile() {
         echo "built"
         cd "${OLDPWD}" || die
     fi
-}
+
 
 
 }
