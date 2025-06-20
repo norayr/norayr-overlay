@@ -33,7 +33,7 @@ src_compile() {
     emake full
 
     if use ocat; then
-        voc -m src/tools/ocat/OCatCmd.Mod || die "Failed to build OCatCmd"
+        "${S}/voc" -m src/tools/ocat/OCatCmd.Mod || die "Failed to build OCatCmd"
     fi
 }
 
