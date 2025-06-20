@@ -33,18 +33,22 @@ src_compile() {
     emake full
 
      if use ocat; then
-        # Extract build flavour variables from Configuration.Make
+        # Extract build flavour from Configuration.Make
         local os datamodel compiler
         os=$(grep '^OS *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
         datamodel=$(grep '^DATAMODEL *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
         compiler=$(grep '^COMPILER *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
 
         local flavour="${os}.${datamodel}.${compiler}"
-        local symdir="${S}/build/${flavour}/2"
+        local builddir="${S}/build/${flavour}"
         local voc="${S}/voc"
 
-        cd "${symdir}" || die
-        "${voc}" -m "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+        # Add proper lib/include for linker
+        export CFLAGS="-L${builddir}/2 -I${builddir}/2/include"
+
+        # Change to .sym directory and build statically linked 'ocat'
+        cd "${builddir}" || die
+        "${voc}" -M -m "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
         cd "${OLDPWD}" || die
     fi
 }
