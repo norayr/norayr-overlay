@@ -20,7 +20,11 @@ RDEPEND="${DEPEND}"
 
 inherit git-r3
 
+
+
 src_compile() {
+    export VOC_INSTALLDIR="${T}/voc"  # sandbox-safe output directory
+
     if use gcc; then
         export CC=gcc
     elif use clang; then
@@ -28,6 +32,9 @@ src_compile() {
     elif use tcc; then
         export CC=tcc
     fi
+
+    # Force regeneration of configuration using sandbox-safe path
+    emake configuration
 
     # Build into a temporary safe path
     export VOC_INSTALLDIR="${T}/voc"
