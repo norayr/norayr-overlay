@@ -11,7 +11,7 @@ IUSE="+gcc clang tcc ocat"
 
 REQUIRED_USE="^^ ( gcc clang tcc )"
 
-DEPEND="dev-build/make
+DEPEND="sys-devel/make
         gcc?   ( sys-devel/gcc )
         clang? ( sys-devel/clang )
         tcc?   ( dev-lang/tcc )"
@@ -29,9 +29,9 @@ src_compile() {
         export CC=tcc
     fi
 
-    export VOC_INSTALLDIR="/opt/voc"
+    # Use a temporary sandbox-safe install directory during build
+    export VOC_INSTALLDIR="${T}/voc-install"
     emake full
-
 
     if use ocat; then
         local os datamodel compiler
@@ -44,26 +44,22 @@ src_compile() {
         local voc="${S}/voc"
 
         export CFLAGS="-O2 -pipe -I${symdir} -L${symdir}"
-        echo "building ocat"
+        einfo "Building OCatCmd..."
         cd "${symdir}" || die
-        #"${voc}" -M "${S}/src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
-         "${voc}" -M "../../../src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+        "${voc}" -M "../../../src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
         cp OCatCmd "${S}/OCatCmd" || die "Could not move OCatCmd binary for install"
-        echo "built"
         cd "${OLDPWD}" || die
     fi
-
-
-
 }
 
 src_install() {
     local instdir="/opt/voc"
 
-    # Prevent attempts to write to /etc or run ldconfig
+    # Override install script that tries to touch /etc and run ldconfig
     echo -e "#!/bin/sh\nexit 0" > src/tools/make/addlibrary.sh
     chmod +x src/tools/make/addlibrary.sh
 
+    # Now install into correct final path (still within sandbox)
     emake INSTALLDIR="${D}${instdir}" install
 
     # Symlinks
@@ -74,10 +70,9 @@ src_install() {
         newbin OCatCmd ocat
     fi
 
-    # Register the library path via env.d
+    # Register LDPATH so VOC shared libs work
     cat > "${T}/90voc" <<EOF
 LDPATH=${instdir}/lib
 EOF
-
     doenvd "${T}/90voc"
 }
