@@ -11,7 +11,7 @@ IUSE="+gcc clang tcc ocat"
 
 REQUIRED_USE="^^ ( gcc clang tcc )"
 
-DEPEND="sys-devel/make
+DEPEND="dev-build/make
         gcc?   ( sys-devel/gcc )
         clang? ( sys-devel/clang )
         tcc?   ( dev-lang/tcc )"
