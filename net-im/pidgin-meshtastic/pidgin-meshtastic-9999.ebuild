@@ -32,11 +32,17 @@ src_prepare() {
 }
 
 src_compile() {
-	tc-export CC
+	tc-export CC PKG_CONFIG
+
+	# Build pkg-config flags
+	local mycflags="$(${PKG_CONFIG} --cflags glib-2.0 purple)"
+	local myldflags="$(${PKG_CONFIG} --libs glib-2.0 purple)"
+
 	emake \
 		CC="$(tc-getCC)" \
-		CFLAGS="${CFLAGS}" \
-		LDFLAGS="${LDFLAGS}"
+		CFLAGS="${CFLAGS} ${mycflags} -Wall -Werror -fPIC" \
+		LDFLAGS="${LDFLAGS} ${myldflags}" \
+		CSRC="$(sed -n 's/^CSRC = \(.*\)/\1/p' Makefile)"
 }
 
 src_install() {
