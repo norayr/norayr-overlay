@@ -47,9 +47,10 @@ src_compile() {
 
 src_install() {
 	# Install the plugin .so file
-	insinto "$(pkg-config --variable=plugindir purple)"
-	doins libmeshtastic.so
-
+	#insinto "$(pkg-config --variable=plugindir purple)"
+	#doins libmeshtastic.so
+        insinto "$(pkg-config --variable=plugindir purple)"
+        newins -m 0755 libmeshtastic.so libmeshtastic.so
 	# Install icons
 	local sizes=(16 22 48)
 	for size in "${sizes[@]}"; do
