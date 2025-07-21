@@ -24,11 +24,13 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	default
-	# ensure nanopb is initialized
-	if [[ ! -d nanopb ]]; then
-		einfo "Cloning nanopb submodule"
-		git submodule update --init --recursive || die
-	fi
+
+	sed -i \
+		-e '/^CFLAGS *=/d' \
+		-e '/^LDFLAGS *=/d' \
+		-e 's/^libmeshtastic.so:.*/libmeshtastic.so: $(CSRC)/' \
+		-e 's|$(CC).*|$(CC) $(CFLAGS) -shared -o $@ $^ $(LDFLAGS)|' \
+		Makefile || die
 }
 
 src_compile() {
