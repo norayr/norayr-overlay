@@ -34,17 +34,17 @@ src_prepare() {
 }
 
 src_compile() {
-  tc-export CC PKG_CONFIG
+	tc-export CC PKG_CONFIG
 
-  local mycflags="$(${PKG_CONFIG} --cflags glib-2.0 purple)"
-  local myldflags="$(${PKG_CONFIG} --libs glib-2.0 purple)"
-    local csrc="meshtastic/mesh.pb.c meshtastic/telemetry.pb.c meshtastic/config.pb.c meshtastic/channel.pb.c meshtastic/xmodem.pb.c meshtastic/device_ui.pb.c meshtastic/module_config.pb.c meshtastic/admin.pb.c meshtastic/connection_status.pb.c nanopb/pb_encode.c nanopb/pb_decode.c nanopb/pb_common.c mtstrings.c meshtastic.c"
+	local mycflags="$(${PKG_CONFIG} --cflags glib-2.0 purple)"
+	local myldflags="$(${PKG_CONFIG} --libs glib-2.0 purple)"
 
-  emake \
-    CC="$(tc-getCC)" \
-    CFLAGS="${CFLAGS} ${mycflags} -Wall -Werror -fPIC" \
-    LDFLAGS="${LDFLAGS} ${myldflags}" \
-    CSRC="${csrc}"
+	local csrc="meshtastic/mesh.pb.c meshtastic/telemetry.pb.c meshtastic/config.pb.c meshtastic/channel.pb.c meshtastic/xmodem.pb.c meshtastic/device_ui.pb.c meshtastic/module_config.pb.c meshtastic/admin.pb.c meshtastic/connection_status.pb.c nanopb/pb_encode.c nanopb/pb_decode.c nanopb/pb_common.c mtstrings.c meshtastic.c"
+
+	emake \
+		CFLAGS="${CFLAGS} ${mycflags} -Wall -Werror -fPIC -I. -Inanopb" \
+		LDFLAGS="${LDFLAGS} ${myldflags}" \
+		CSRC="${csrc}"
 }
 
 src_install() {
