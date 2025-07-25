@@ -7,11 +7,12 @@ inherit toolchain-funcs
 
 DESCRIPTION="ChatGPT plugin for Pidgin/libpurple"
 HOMEPAGE="https://github.com/EionRobb/pidgin-chatgpt"
-SRC_URI="https://github.com/EionRobb/pidgin-chatgpt/archive/refs/heads/master.tar.gz -> ${P}.tar.gz"
+EGIT_REPO_URI="https://github.com/EionRobb/pidgin-chatgpt.git"
+SRC_URI=""
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
+KEYWORDS=""
 IUSE=""
 
 RDEPEND="
@@ -25,45 +26,37 @@ DEPEND="${RDEPEND}
   virtual/pkgconfig
 "
 
-S="${WORKDIR}/${PN}-master"
+S="${WORKDIR}/${P}"
+
+src_unpack() {
+	git-r3_src_unpack
+}
 
 src_prepare() {
-  default
-
-  # Strip Windows logic and force libchatgpt.so target
-  sed -i \
-    -e '/^WIN32/d' \
-    -e 's|$(PLUGIN_TARGET)|libchatgpt.so|' \
-    -e 's|$(CC)|$(CC) $(CFLAGS)|g' \
-    -e 's| -o $@| $(LDFLAGS) -o $@|' \
-    -e 's|`$(PKG_CONFIG)|$(shell $(PKG_CONFIG)|g' \
-    -e 's|purple2compat/http.c purple2compat/purple-socket.c|purple2compat/http.c purple2compat/purple-socket.c|' \
-    Makefile || die
+	default
 }
 
 src_compile() {
-  tc-export CC PKG_CONFIG
+	tc-export CC PKG_CONFIG
 
-  emake \
-    CFLAGS="${CFLAGS} $(${PKG_CONFIG} --cflags purple glib-2.0 json-glib-1.0 zlib) -fPIC -Ipurple2compat" \
-    LDFLAGS="${LDFLAGS} $(${PKG_CONFIG} --libs purple glib-2.0 json-glib-1.0 zlib)" \
-    libchatgpt.so
+	local cflags="${CFLAGS} -fPIC -Ipurple2compat $(${PKG_CONFIG} --cflags purple glib-2.0 json-glib-1.0 zlib)"
+	local ldflags="${LDFLAGS} $(${PKG_CONFIG} --libs purple glib-2.0 json-glib-1.0 zlib)"
+	local sources="libchatgpt.c markdown.c purple2compat/http.c purple2compat/purple-socket.c"
+
+	${CC} ${cflags} -shared -o libchatgpt.so ${sources} ${ldflags} || die "compilation failed"
 }
 
 src_install() {
-  # Install the plugin shared object
-  exeinto "$(${PKG_CONFIG} --variable=plugindir purple)"
-  doexe libchatgpt.so
+	exeinto "$(${PKG_CONFIG} --variable=plugindir purple)"
+	doexe libchatgpt.so
 
-  # Install icons if present
-  local sizes=(16 22 48)
-  for size in "${sizes[@]}"; do
-    if [[ -f "icons/${size}/chatgpt.png" ]]; then
-      insinto "/usr/share/pixmaps/pidgin/protocols/${size}"
-      doins "icons/${size}/chatgpt.png"
-    fi
-  done
+	local sizes=(16 22 48)
+	for size in "${sizes[@]}"; do
+		if [[ -f "icons/${size}/chatgpt.png" ]]; then
+			insinto "/usr/share/pixmaps/pidgin/protocols/${size}"
+			doins "icons/${size}/chatgpt.png"
+		fi
+	done
 
-  dodoc README.md
+	dodoc README.md
 }
-
