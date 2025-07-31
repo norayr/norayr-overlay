@@ -35,6 +35,8 @@ src_compile() {
 
 src_install() {
     dobin coolkbd
-    dodoc README* TODO* maemo/README* 2>/dev/null || true
+    for doc in README README.md README.txt TODO maemo/README; do
+        [[ -f ${doc} ]] && dodoc "${doc}"
+    done
 }
 
