@@ -20,23 +20,21 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-inherit git-r3
+inherit git-r3 toolchain-funcs
 
 src_prepare() {
     default
 
-    # Use our custom config.h
-    eapply_user
-    cp "${FILESDIR}/config.h" "${S}"
+    # Use custom config.h from files/
+    cp "${FILESDIR}/config.h" config.h || die "failed to copy config.h"
 }
 
 src_compile() {
-    emake CC="$(tc-getCC)" coolkbd
+    ./build.sh -release -config config.h -target coolkbd || die "build failed"
 }
 
 src_install() {
     dobin coolkbd
-    dodoc README* TODO* maemo/README* || true
+    dodoc README* TODO* maemo/README* 2>/dev/null || true
 }
-
 
