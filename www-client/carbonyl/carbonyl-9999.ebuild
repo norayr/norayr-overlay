@@ -23,7 +23,7 @@ BDEPEND="
   dev-vcs/git
   dev-lang/python:3.11[sqlite]
   sys-apps/coreutils
-  sys-devel/ccache
+  dev-util/ccache
 "
 # Runtime libs are same as -bin variant; Chromium will link plenty of its own.
 RDEPEND="
