@@ -10,7 +10,6 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 RESTRICT="strip mirror"
 
-# Upstream publishes per-arch zips for v0.0.3
 SRC_URI="
   amd64? ( https://github.com/fathyb/carbonyl/releases/download/v${PV}/carbonyl.linux-amd64.zip -> ${P}-amd64.zip )
   arm64? ( https://github.com/fathyb/carbonyl/releases/download/v${PV}/carbonyl.linux-arm64.zip -> ${P}-arm64.zip )
@@ -24,9 +23,7 @@ RDEPEND="
 "
 BDEPEND="app-arch/unzip"
 
-# Archive layout is flat; keep everything together under /opt to avoid ELF RPATH pain.
 S="${WORKDIR}"
-
 QA_PREBUILT="*"
 
 src_unpack() {
@@ -40,10 +37,17 @@ src_unpack() {
 }
 
 src_install() {
-  # Put payload into /opt/${PN}
-  dodir /opt/${PN}
+  # Find the versioned folder from the zip (e.g., carbonyl-0.0.3)
+  local d
+  d=( "${S}"/carbonyl-* )
+  [[ -d ${d[0]} ]] || die "Couldn't find unpacked carbonyl-* directory"
+
+  # Flatten into /opt/${PN}
   insinto /opt/${PN}
-  doins -r "${S}/"*
+  doins -r "${d[0]}/"*
+
+  # Ensure the launcher is executable
+  fperms +x /opt/${PN}/carbonyl
 
   # Wrapper
   newbin - carbonyl <<-'EOF'
@@ -52,12 +56,11 @@ exec /opt/carbonyl-bin/carbonyl "$@"
 EOF
 
   # Docs if present
-  [[ -f "${S}/LICENSE"    ]] && dodoc "${S}/LICENSE"
-  [[ -f "${S}/README.md"  ]] && dodoc "${S}/README.md"
+  [[ -f "${d[0]}/LICENSE"   ]] && dodoc "${d[0]}/LICENSE"
+  [[ -f "${d[0]}/README.md" ]] && dodoc "${d[0]}/README.md"
 }
 
 pkg_postinst() {
   einfo "Installed to /opt/${PN}, wrapper at /usr/bin/carbonyl."
   einfo "Try: carbonyl --bitmap --zoom 2 https://example.org"
 }
-
