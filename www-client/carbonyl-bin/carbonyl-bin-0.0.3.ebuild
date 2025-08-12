@@ -3,17 +3,19 @@
 
 EAPI=8
 
-DESCRIPTION="Chromium-based browser that runs in your terminal (binary release)"
+DESCRIPTION="Chromium-based browser that runs in your terminal (prebuilt binaries)"
 HOMEPAGE="https://github.com/fathyb/carbonyl"
-SRC_URI="https://github.com/fathyb/carbonyl/releases/download/v${PV}/carbonyl.linux-amd64.zip -> ${P}-amd64.zip"
-
 LICENSE="BSD-3"
 SLOT="0"
-KEYWORDS="~amd64"
-RESTRICT="strip mirror"  # prestripped upstream binary; avoid mirroring GH assets
+KEYWORDS="~amd64 ~arm64"
+RESTRICT="strip mirror"
 
-# Upstream notes these at runtime on Linux (see release notes)
-# nss: SSL/certs, expat: XML, alsa-lib: audio, fontconfig: font config
+# Upstream publishes per-arch zips for v0.0.3
+SRC_URI="
+  amd64? ( https://github.com/fathyb/carbonyl/releases/download/v${PV}/carbonyl.linux-amd64.zip -> ${P}-amd64.zip )
+  arm64? ( https://github.com/fathyb/carbonyl/releases/download/v${PV}/carbonyl.linux-arm64.zip -> ${P}-arm64.zip )
+"
+
 RDEPEND="
   dev-libs/nss
   dev-libs/expat
@@ -22,37 +24,40 @@ RDEPEND="
 "
 BDEPEND="app-arch/unzip"
 
-S="${WORKDIR}/carbonyl-${PV}"
+# Archive layout is flat; keep everything together under /opt to avoid ELF RPATH pain.
+S="${WORKDIR}"
 
 QA_PREBUILT="*"
 
 src_unpack() {
-  unpack "${P}-amd64.zip"
+  if use amd64 ; then
+    unpack "${P}-amd64.zip"
+  elif use arm64 ; then
+    unpack "${P}-arm64.zip"
+  else
+    die "Unsupported keyword"
+  fi
 }
 
 src_install() {
-  # Install the whole payload under /opt to keep the Chromium runtime together
+  # Put payload into /opt/${PN}
   dodir /opt/${PN}
   insinto /opt/${PN}
   doins -r "${S}/"*
 
-  # Launch wrapper
-  newbin - carbonyl <<'EOF'
+  # Wrapper
+  newbin - carbonyl <<-'EOF'
 #!/bin/sh
 exec /opt/carbonyl-bin/carbonyl "$@"
 EOF
 
-  # Docs / license if present in the archive
-  if [[ -f "${S}/LICENSE" ]]; then
-    dodoc "${S}/LICENSE"
-  fi
-  if [[ -f "${S}/README.md" ]]; then
-    dodoc "${S}/README.md"
-  fi
+  # Docs if present
+  [[ -f "${S}/LICENSE"    ]] && dodoc "${S}/LICENSE"
+  [[ -f "${S}/README.md"  ]] && dodoc "${S}/README.md"
 }
 
 pkg_postinst() {
-  einfo "Carbonyl is installed at /opt/${PN} with wrapper /usr/bin/carbonyl."
-  einfo "Useful flags: --bitmap and --zoom (see: carbonyl --help)."
+  einfo "Installed to /opt/${PN}, wrapper at /usr/bin/carbonyl."
+  einfo "Try: carbonyl --bitmap --zoom 2 https://example.org"
 }
 
