@@ -12,22 +12,28 @@ EGIT_BRANCH="dev"
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS=""
-IUSE="+opus +jxl tui sse41"
+IUSE="+gui ncurses +bidi +harfbuzz mp3 +opus +jxl +webp sse41"
+
+REQUIRED_USE="|| ( gui ncurses )"
 
 DEPEND="
-    media-libs/libsdl2
     dev-libs/libpcre
     dev-libs/libunistring
     dev-libs/openssl:0=
     sys-libs/zlib
-    media-libs/harfbuzz
-    dev-libs/fribidi
-    media-sound/mpg123
-    media-libs/libwebp
-    opus? ( media-libs/opusfile )
-    jxl? ( media-libs/libjxl )
     dev-libs/the_Foundation
-    tui? ( dev-libs/sealcurses )
+
+    gui? (
+        media-libs/libsdl2
+        bidi? ( dev-libs/fribidi )
+        harfbuzz? ( media-libs/harfbuzz )
+        mp3? ( media-sound/mpg123 )
+        opus? ( media-libs/opusfile )
+        webp? ( media-libs/libwebp )
+        jxl? ( media-libs/libjxl )
+    )
+
+    ncurses? ( dev-libs/sealcurses )
 "
 RDEPEND="${DEPEND}"
 
@@ -58,27 +64,37 @@ src_prepare() {
 
 src_configure() {
     local mycmakeargs=(
-        -DENABLE_TUI=$(usex tui)
+        -DENABLE_GUI=$(usex gui)
+        -DENABLE_TUI=$(usex ncurses)
+
         -DENABLE_STATIC=OFF
-        -DENABLE_FRIBIDI=ON
-        -DENABLE_HARFBUZZ=ON
-        -DENABLE_WEBP=ON
-        -DENABLE_MPG123=ON
+
+        -DENABLE_FRIBIDI=$(usex bidi)
+        -DENABLE_HARFBUZZ=$(usex harfbuzz)
+        -DENABLE_MPG123=$(usex mp3)
         -DENABLE_OPUS=$(usex opus)
+        -DENABLE_WEBP=$(usex webp)
         -DENABLE_JXL=$(usex jxl)
+
         -DTFDN_ENABLE_SSE41=$(usex sse41)
+
+        -DENABLE_FRIBIDI_BUILD=OFF
+        -DENABLE_HARFBUZZ_MINIMAL=OFF
     )
+
     cmake_src_configure
 }
 
 src_install() {
     cmake_src_install
 
-    insinto /usr/share/applications
-    doins "${BUILD_DIR}/fi.skyjake.Lagrange.desktop"
+    if use gui ; then
+        insinto /usr/share/applications
+        doins "${BUILD_DIR}/fi.skyjake.Lagrange.desktop"
 
-    insinto /usr/share/icons/hicolor/256x256/apps
-    doins "${S}/res/lagrange-256.png"
+        insinto /usr/share/icons/hicolor/256x256/apps
+        doins "${S}/res/lagrange-256.png"
+    fi
 
     doman "${S}/res/lagrange.1"
 }

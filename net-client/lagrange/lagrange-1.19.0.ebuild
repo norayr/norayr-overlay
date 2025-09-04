@@ -11,22 +11,31 @@ SRC_URI="https://github.com/skyjake/lagrange/releases/download/v${PV}/${P}.tar.g
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
-IUSE="+opus +jxl tui sse41"
+IUSE="+gui ncurses +bidi +harfbuzz mp3 +opus +jxl +webp sse41"
 
+# Require at least one UI
+REQUIRED_USE="|| ( gui ncurses )"
+
+# Core libraries always used by the project
+# UI-specific bits are conditional below.
 DEPEND="
-    media-libs/libsdl2
     dev-libs/libpcre
     dev-libs/libunistring
     dev-libs/openssl:0=
     sys-libs/zlib
-    media-libs/harfbuzz
-    dev-libs/fribidi
-    media-sound/mpg123
-    media-libs/libwebp
-    opus? ( media-libs/opusfile )
-    jxl? ( media-libs/libjxl )
     dev-libs/the_Foundation
-    tui? ( dev-libs/sealcurses )
+
+    gui? (
+        media-libs/libsdl2
+        bidi? ( dev-libs/fribidi )
+        harfbuzz? ( media-libs/harfbuzz )
+        mp3? ( media-sound/mpg123 )
+        opus? ( media-libs/opusfile )
+        webp? ( media-libs/libwebp )
+        jxl? ( media-libs/libjxl )
+    )
+
+    ncurses? ( dev-libs/sealcurses )
 "
 RDEPEND="${DEPEND}"
 
@@ -39,10 +48,10 @@ DOCS=( README.md )
 src_prepare() {
     cmake_src_prepare
 
-    # Remove bundled submodules
+    # Remove bundled submodules (we use system libs)
     rm -rf lib/the_Foundation lib/sealcurses lib/harfbuzz lib/fribidi || die
 
-    # Force system libraries
+    # Force system libraries by neutering the submodule adds
     sed -i \
         -e '/add_subdirectory(lib\/the_Foundation)/d' \
         -e '/add_subdirectory(lib\/harfbuzz)/d' \
@@ -57,29 +66,40 @@ src_prepare() {
 
 src_configure() {
     local mycmakeargs=(
-        -DENABLE_TUI=$(usex tui)
+        -DENABLE_GUI=$(usex gui)
+        -DENABLE_TUI=$(usex ncurses)
+
         -DENABLE_STATIC=OFF
-        -DENABLE_FRIBIDI=ON
-        -DENABLE_HARFBUZZ=ON
-        -DENABLE_WEBP=ON
-        -DENABLE_MPG123=ON
+
+        -DENABLE_FRIBIDI=$(usex bidi)
+        -DENABLE_HARFBUZZ=$(usex harfbuzz)
+        -DENABLE_MPG123=$(usex mp3)
         -DENABLE_OPUS=$(usex opus)
+        -DENABLE_WEBP=$(usex webp)
         -DENABLE_JXL=$(usex jxl)
+
         -DTFDN_ENABLE_SSE41=$(usex sse41)
+
+        # never build bundled libs
+        -DENABLE_FRIBIDI_BUILD=OFF
+        -DENABLE_HARFBUZZ_MINIMAL=OFF
     )
+
     cmake_src_configure
 }
 
 src_install() {
     cmake_src_install
 
-    # Desktop entry and icon
-    insinto /usr/share/applications
-    doins "${BUILD_DIR}/fi.skyjake.Lagrange.desktop"
+    # Desktop entry & icon only make sense for the GUI build
+    if use gui ; then
+        insinto /usr/share/applications
+        doins "${BUILD_DIR}/fi.skyjake.Lagrange.desktop"
 
-    insinto /usr/share/icons/hicolor/256x256/apps
-    doins "${S}/res/lagrange-256.png"
+        insinto /usr/share/icons/hicolor/256x256/apps
+        doins "${S}/res/lagrange-256.png"
+    fi
 
-    # Man page
+    # Man page is useful for both UIs
     doman "${S}/res/lagrange.1"
 }
