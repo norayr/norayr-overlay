@@ -11,7 +11,7 @@ EGIT_REPO_URI="https://codeberg.org/Bainne/retrotv-dock.git"
 
 # Upstream doesn't clearly state a license in README;
 # change this if you confirm a specific license later.
-LICENSE="all-rights-reserved"
+LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
 IUSE=""
