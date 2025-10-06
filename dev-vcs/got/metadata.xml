@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pkgmetadata>
+  <maintainer type="person">
+    <email>norayr@arnet.am</email>
+    <name>Norayr Chilingarian</name>
+  </maintainer>
+  <use>
+    <flag name="webd">Build/install gotwebd (FastCGI web UI; needs libevent)</flag>
+    <flag name="gitwrapper">Build gitwrapper and point it to Git’s libexec path</flag>
+  </use>
+  <upstream>
+    <remote-id type="homepage">https://gameoftrees.org</remote-id>
+    <remote-id type="codeberg">stsp/got-portable</remote-id>
+  </upstream>
+</pkgmetadata>
