@@ -15,7 +15,7 @@ RDEPEND="
   sys-libs/ncurses:=
   dev-libs/libbsd
   app-crypt/libmd
-  virtual/libuuid
+  sys-apps/util-linux:=
   sys-libs/zlib
   || ( dev-libs/libretls dev-libs/libressl:0= )
   webd? ( dev-libs/libevent )
