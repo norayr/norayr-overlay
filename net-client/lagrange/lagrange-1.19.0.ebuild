@@ -70,7 +70,7 @@ src_configure() {
         -DENABLE_TUI=$(usex ncurses)
 
         -DENABLE_STATIC=OFF
-
+        -DCMAKE_BUILD_TYPE=Release
         -DENABLE_FRIBIDI=$(usex bidi)
         -DENABLE_HARFBUZZ=$(usex harfbuzz)
         -DENABLE_MPG123=$(usex mp3)
