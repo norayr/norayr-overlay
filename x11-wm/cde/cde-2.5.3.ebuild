@@ -52,7 +52,7 @@ DEPEND="
   app-text/opensp
 
   dev-libs/openssl:0=
-  dev-libs/libutempter
+  sys-libs/libutempter
   dev-db/lmdb
 
   sys-libs/pam
