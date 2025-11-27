@@ -26,7 +26,6 @@ BDEPEND="
 # Based on upstream LinuxBuild wiki + old cde-9999 ebuild deps
 # https://sourceforge.net/p/cdesktopenv/wiki/LinuxBuild/
 DEPEND="
-  x11-libs/libXp
   x11-libs/libXt
   x11-libs/libXmu
   x11-libs/libXft
