@@ -43,7 +43,7 @@ DEPEND="
   x11-apps/sessreg
   x11-misc/xbitmaps
 
-  media-libs/jpeg:62
+  virtual/jpeg
   media-libs/freetype:2
 
   dev-lang/tcl
