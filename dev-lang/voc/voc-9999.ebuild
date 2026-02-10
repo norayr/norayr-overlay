@@ -81,7 +81,10 @@ src_install() {
     dosym "${instdir}/bin/showdef" /usr/bin/showdef
 
     if use ocat; then
-        newbin OCatCmd ocat
+        #newbin OCatCmd ocat
+        exeinto "${instdir}/bin"
+        newexe OCatCmd ocat
+        dosym "${instdir}/bin/ocat" /usr/bin/ocat
     fi
 
     # Environment support
