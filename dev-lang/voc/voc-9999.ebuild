@@ -12,39 +12,45 @@ IUSE="+gcc clang tcc ocat"
 REQUIRED_USE="^^ ( gcc clang tcc )"
 
 DEPEND="dev-build/make
-        gcc?   ( sys-devel/gcc )
-        clang? ( sys-devel/clang )
-        tcc?   ( dev-lang/tcc )"
+    gcc?   ( sys-devel/gcc )
+    clang? ( sys-devel/clang )
+    tcc?   ( dev-lang/tcc )"
 
 RDEPEND="${DEPEND}"
 
 inherit git-r3
 
-
-
 src_compile() {
-    export VOC_INSTALLDIR="${T}/voc"  # sandbox-safe output directory
+    local buildroot="${T}/voc"
 
     if use gcc; then
         export CC=gcc
     elif use clang; then
         export CC=clang
-    elif use tcc; then
+    else
         export CC=tcc
     fi
 
-    # Force regeneration of configuration using sandbox-safe path
-    emake configuration
+    # Generate config with sandbox-safe INSTALLDIR
+    emake INSTALLDIR="${buildroot}" configuration
 
-    # Build into a temporary safe path
-    export VOC_INSTALLDIR="${T}/voc"
-    emake full
+    # Ensure config files really contain the sandbox-safe installdir
+    sed -i \
+        -e "s|^INSTALLDIR[[:space:]]*=[[:space:]]*.*|INSTALLDIR=${buildroot}|" \
+        "${S}/Configuration.Make" || die
+
+    sed -i \
+        -e "s|^[[:space:]]*installdir\*.*|  installdir*  = '${buildroot}';|" \
+        "${S}/Configuration.Mod" || die
+
+    # Now build, again forcing INSTALLDIR because 'full' runs 'configuration'
+    emake INSTALLDIR="${buildroot}" full
 
     if use ocat; then
         local os datamodel compiler
-        os=$(grep '^OS *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
-        datamodel=$(grep '^DATAMODEL *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
-        compiler=$(grep '^COMPILER *=' "${S}/Configuration.Make" | awk -F= '{print $2}' | xargs)
+        os=$(awk -F= '/^OS=/{print $2}' "${S}/Configuration.Make")
+        datamodel=$(awk -F= '/^DATAMODEL=/{print $2}' "${S}/Configuration.Make")
+        compiler=$(awk -F= '/^COMPILER=/{print $2}' "${S}/Configuration.Make")
 
         local flavour="${os}.${datamodel}.${compiler}"
         local symdir="${S}/build/${flavour}/2"
@@ -53,18 +59,19 @@ src_compile() {
         export CFLAGS="-O2 -pipe -I${symdir} -L${symdir}"
         einfo "Building OCatCmd..."
         cd "${symdir}" || die
-        VOC_INSTALLDIR="${T}/voc" "${voc}" -M "../../../src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
-        cp OCatCmd "${S}/OCatCmd" || die "Could not move OCatCmd binary for install"
-        cd "${OLDPWD}" || die
+        "${voc}" -M "../../../src/tools/ocat/OCatCmd.Mod" || die "Failed to build OCatCmd"
+        cp OCatCmd "${S}/OCatCmd" || die
     fi
 }
 
-src_install() {
-    local instdir="/opt/voc"
 
-    # Prevent writes to /etc
-    echo -e "#!/bin/sh\nexit 0" > src/tools/make/addlibrary.sh
-    chmod +x src/tools/make/addlibrary.sh
+
+src_install() {
+  local instdir="/opt/voc"
+
+  # Prevent writes to /etc
+  echo -e "#!/bin/sh\nexit 0" > src/tools/make/addlibrary.sh
+  chmod +x src/tools/make/addlibrary.sh
 
     # Use install path for real packaging
     emake INSTALLDIR="${D}${instdir}" install
