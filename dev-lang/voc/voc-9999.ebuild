@@ -44,7 +44,7 @@ src_compile() {
         "${S}/Configuration.Mod" || die
 
     # Now build, again forcing INSTALLDIR because 'full' runs 'configuration'
-    emake INSTALLDIR="${buildroot}" full
+    emake -j1 INSTALLDIR="${buildroot}" full
 
     if use ocat; then
         local os datamodel compiler
