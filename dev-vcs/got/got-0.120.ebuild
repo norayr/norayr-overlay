@@ -6,7 +6,7 @@ SRC_URI="https://gameoftrees.org/releases/portable/got-portable-${PV}.tar.gz -> 
 
 LICENSE="ISC"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="webd gitwrapper"
 
 RDEPEND="

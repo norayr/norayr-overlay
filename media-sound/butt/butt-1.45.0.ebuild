@@ -11,7 +11,8 @@ SRC_URI="https://danielnoethen.de/butt/release/${PV}/butt-${PV}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86 ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+
 IUSE="aac alsa flac jack opus vorbis"
 
 DEPEND="

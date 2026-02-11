@@ -8,7 +8,7 @@ EGIT_REPO_URI="https://github.com/norayr/wmstickynotes.git"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE=""
 
 DEPEND="x11-libs/gtk+:2

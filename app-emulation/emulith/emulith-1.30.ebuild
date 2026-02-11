@@ -10,7 +10,7 @@ HOMEPAGE="http://pascal.hansotten.com/niklaus-wirth/lilith/emulith/"
 SRC_URI="
     http://pascal.hansotten.com/uploads/lilith/Emulith_v13.tgz -> ${P}.tgz
     http://pascal.hansotten.com/uploads/lilith/docu/LilithHandbook_Aug82.pdf
-    tools? ( 
+    tools? (
         http://pascal.hansotten.com/uploads/lilith/ETH_Disks.zip
         http://pascal.hansotten.com/uploads/lilith/medos.zip
         http://pascal.hansotten.com/uploads/lilith/medos_txt.zip
@@ -19,7 +19,8 @@ SRC_URI="
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+
 IUSE="+floppy tools compiler"
 
 RDEPEND="

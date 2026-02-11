@@ -12,7 +12,8 @@ EGIT_REPO_URI="https://coolbug.org/earthworm/repo/bw/helianthus"
 
 LICENSE="public-domain"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+
 IUSE=""
 
 # Build-time dependencies

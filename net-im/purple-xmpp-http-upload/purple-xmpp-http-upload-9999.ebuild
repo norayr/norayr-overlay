@@ -9,7 +9,7 @@ EGIT_REPO_URI="https://github.com/norayr/purple-xmpp-http-upload.git"
 # Adjust if upstream clarifies a license
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 
 BDEPEND="virtual/pkgconfig"
 DEPEND="

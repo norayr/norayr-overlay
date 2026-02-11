@@ -11,7 +11,7 @@ EGIT_REPO_URI="https://github.com/gapan/wminfo.git"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE=""
 
 # Likely X11 + Xpm dockapp deps

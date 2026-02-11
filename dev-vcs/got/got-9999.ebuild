@@ -8,6 +8,7 @@ EGIT_REPO_URI="https://codeberg.org/stsp/got-portable.git"
 EGIT_BRANCH="portable"
 
 LICENSE="ISC"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 SLOT="0"
 IUSE="webd gitwrapper"
 

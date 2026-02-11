@@ -8,7 +8,7 @@ EGIT_REPO_URI="https://github.com/vpyk/emu80v4.git"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86 ~arm"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 
 IUSE="qt sdl lite"
 REQUIRED_USE="^^ ( qt sdl lite )"

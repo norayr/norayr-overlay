@@ -10,8 +10,8 @@ EGIT_REPO_URI="https://git.skyjake.fi/skyjake/sealcurses.git"
 
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
-KEYWORDS=""
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+
 IUSE="static-libs"
 
 DEPEND="

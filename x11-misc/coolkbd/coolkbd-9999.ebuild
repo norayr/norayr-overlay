@@ -9,7 +9,7 @@ EGIT_REPO_URI="https://repo.coolbug.org/repos/bw/coolkbd.git"
 SRC_URI=""
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE=""
 
 DEPEND="

@@ -9,7 +9,7 @@ SRC_URI="mirror://sourceforge/cdesktopenv/${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE=""
 
 S="${WORKDIR}/${P}"

@@ -13,7 +13,7 @@ EGIT_REPO_URI="https://codeberg.org/Bainne/retrotv-dock.git"
 # change this if you confirm a specific license later.
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE=""
 
 # pkg-config is used during compile to discover flags/libs

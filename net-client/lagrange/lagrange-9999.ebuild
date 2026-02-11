@@ -11,7 +11,8 @@ EGIT_BRANCH="dev"
 
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+
 IUSE="+gui ncurses +bidi +harfbuzz mp3 +opus +jxl +webp sse41"
 
 REQUIRED_USE="|| ( gui ncurses )"

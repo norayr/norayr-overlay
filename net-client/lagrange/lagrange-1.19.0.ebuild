@@ -10,7 +10,7 @@ SRC_URI="https://github.com/skyjake/lagrange/releases/download/v${PV}/${P}.tar.g
 
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 
 # Default to GUI; keep TUI optional and off by default to avoid sealcurses/tfdn conflicts
 IUSE="+gui -ncurses +bidi +harfbuzz mp3 +opus +jxl +webp sse41 debug"
