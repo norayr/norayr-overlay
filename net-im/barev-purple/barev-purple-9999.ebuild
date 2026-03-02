@@ -51,6 +51,12 @@ pkg_postinst() {
   elog "  3) Choose protocol 'barev' and pick a nickname."
   elog
   elog "If the protocol does not appear, restart Pidgin."
+  elog "  4) Add contacts: nick@ipv6 where ipv6 is their Yggdrasil IP."
+  elog
+  elog "By default Barev uses 1337 port and 50000-50049 for file transfers."
+  elog "Make sure to whitelist those ports if necessary."
+  elog
+  elog "Take care!"
 }
 
 
