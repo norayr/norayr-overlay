@@ -35,7 +35,6 @@ src_install() {
 	newinitd conf/rn.openrc rn
 
 	dodoc readme.md
-	#dobin test_vectors.sh
 }
 
 
