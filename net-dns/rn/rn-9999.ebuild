@@ -12,7 +12,7 @@ EGIT_REPO_URI="https://github.com/norayr/rn.git"
 # Set this after you add a LICENSE file to the repo.
 LICENSE="|| ( MIT GPL-2 GPL-3 BSD )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE=""
 
 DEPEND="
