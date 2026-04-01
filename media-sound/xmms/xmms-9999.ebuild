@@ -19,6 +19,7 @@ RDEPEND="
 	>=media-libs/gstreamer-1.16:1.0
 	>=media-libs/gst-plugins-base-1.16:1.0
 	>=media-libs/gst-plugins-good-1.16:1.0
+	>=media-plugins/gst-plugins-mpg123-1.24.0
 	>=net-libs/libsoup-3.0:3.0
 	>=dev-libs/json-glib-1.6
 	>=app-arch/libarchive-3.0
