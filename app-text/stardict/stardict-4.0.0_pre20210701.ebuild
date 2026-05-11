@@ -18,7 +18,7 @@ S="${WORKDIR}/stardict-3-96b96d89eab5f0ad9246c2569a807d6d7982aa84"
 LICENSE="CPL-1.0 GPL-3 LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc ~ppc64 ~riscv"
-IUSE="advertisement cal canberra debug dictdotcn espeak examples flite fortune gnome gucharmap htmlparse info man perl powerwordparse pronounce spell tools updateinfo wikiparse wordnet xdxfparse youdaodict"
+IUSE="advertisement cal canberra debug dictdotcn espeak espeak-ng examples flite fortune gnome gucharmap htmlparse info man perl powerwordparse pronounce spell tools updateinfo wikiparse wordnet xdxfparse youdaodict"
 
 RESTRICT="test"
 
@@ -31,7 +31,8 @@ COMMON_DEPEND="
   x11-libs/pango
   sys-libs/zlib
   canberra? ( media-libs/libcanberra[gtk3] )
-  espeak? ( app-accessibility/espeak-ng )
+  espeak? ( app-accessibility/espeak )
+  espeak-ng? ( app-accessibility/espeak-ng )
   flite? ( app-accessibility/flite )
   gucharmap? ( gnome-extra/gucharmap:2.90= )
   spell? ( >=app-text/enchant-1.2:0= )
@@ -93,7 +94,8 @@ src_configure() {
     $(use_enable cal) \
     $(use_enable debug) \
     $(use_enable dictdotcn) \
-    $(use_enable espeak espeak-ng) \
+    $(use_enable espeak) \
+    $(use_enable espeak-ng) \
     $(use_enable flite) \
     $(use_enable fortune) \
     $(use_enable gucharmap) \
