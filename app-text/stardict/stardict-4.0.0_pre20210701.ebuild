@@ -18,7 +18,7 @@ S="${WORKDIR}/stardict-3-96b96d89eab5f0ad9246c2569a807d6d7982aa84"
 LICENSE="CPL-1.0 GPL-3 LGPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc ~ppc64 ~riscv"
-IUSE="advertisement cal canberra debug dictdotcn espeak espeak-ng examples flite fortune gnome gucharmap htmlparse info man perl powerwordparse pronounce spell tools updateinfo wikiparse wordnet xdxfparse youdaodict"
+IUSE="advertisement cal debug dictdotcn espeak espeak-ng examples flite fortune gnome gucharmap htmlparse info man perl powerwordparse pronounce spell tools updateinfo wikiparse wordnet xdxfparse youdaodict"
 
 RESTRICT="test"
 
@@ -30,7 +30,8 @@ COMMON_DEPEND="
   x11-libs/gdk-pixbuf:2
   x11-libs/pango
   sys-libs/zlib
-  canberra? ( media-libs/libcanberra[gtk3] )
+  media-libs/libcanberra
+  media-libs/libcanberra-gtk3
   espeak? ( app-accessibility/espeak )
   espeak-ng? ( app-accessibility/espeak-ng )
   flite? ( app-accessibility/flite )
@@ -81,9 +82,6 @@ src_prepare() {
       dict/Makefile.am || die
   fi
 
-  if ! use canberra; then
-    sed -i 's/ libcanberra libcanberra-gtk3//' dict/configure.ac || die
-  fi
 
   eautoreconf
 }
