@@ -71,7 +71,14 @@ src_prepare() {
     sed -i \
       -e '/GNOME_DOC_INIT/d' \
       -e '/help\/Makefile/d' dict/configure.ac || die
-    sed -i '/help/d' dict/Makefile.am || die
+
+    # Do not delete the whole Makefile.am line: upstream keeps SUBDIRS and
+    # other Automake variables on the same physical line in this snapshot.
+    # Only remove the help subdir from SUBDIRS, otherwise Automake may
+    # generate a syntactically broken dict/Makefile.
+    sed -i \
+      -e 's/[[:space:]]\+help\([[:space:]]\+\)/\1/' \
+      dict/Makefile.am || die
   fi
 
   if ! use canberra; then
