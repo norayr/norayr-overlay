@@ -22,33 +22,59 @@ x11-libs/libX11
 RDEPEND="${DEPEND}"
 
 src_compile() {
-local lazarus_config="${T}/lazarus"
+local lazarus_path="/usr/share/lazarus"
+local target_cpu target_os fpc_target
 
 ```
-mkdir -p "${lazarus_config}" || die
+target_cpu=$(fpc -iTP) ||
+	die "Could not determine the FPC target CPU"
+target_os=$(fpc -iTO) ||
+	die "Could not determine the FPC target OS"
 
-lazbuild \
-	--primary-config-path="${lazarus_config}" \
-	--widgetset=gtk2 \
-	--build-all \
-	project1.lpi ||
-	die "lazbuild failed"
+fpc_target="${target_cpu}-${target_os}"
+
+[[ -d ${lazarus_path}/lcl/units/${fpc_target}/gtk2 ]] ||
+	die "Lazarus GTK2 units not found for ${fpc_target}"
+
+mkdir -p "${T}/units" || die
+
+fpc project1.lpr \
+	-FU"${T}/units" \
+	-Xs -Xg \
+	-MObjFPC -Scgi \
+	-O1 -gl \
+	-vewnhi -l \
+	-Fu"${lazarus_path}/components/lazutils" \
+	-Fu"${lazarus_path}/lcl/units/${fpc_target}" \
+	-Fu"${lazarus_path}/lcl/units/${fpc_target}/gtk2" \
+	-Fu"${lazarus_path}/packager/units/${fpc_target}" \
+	-Fu. \
+	-ocomics-daily \
+	-dLCL -dLCLgtk2 ||
+	die "fpc build failed"
 ```
 
 }
 
 src_install() {
-newbin project1 comics-daily
+dobin comics-daily
 
 ```
-insinto /usr/share/pixmaps
-doins comics-daily.png
+newicon -s 48 comics-daily.png comics-daily.png
 
 make_desktop_entry \
 	comics-daily \
 	"Comics Daily" \
 	comics-daily \
-	"Graphics;Viewer;"
+	"Network;News;"
+
+local f
+for f in comics-daily-insect*.png; do
+	[[ -f ${f} ]] || continue
+
+	insinto /usr/share/pixmaps/comics-daily
+	doins "${f}"
+done
 
 dodoc readme.md
 ```
