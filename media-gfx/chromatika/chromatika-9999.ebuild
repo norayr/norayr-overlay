@@ -49,7 +49,6 @@ src_install() {
 		warm.png
 		everyday.png
 		landscape.png
-		cool.png
 	)
 
 	dobin chromatika
