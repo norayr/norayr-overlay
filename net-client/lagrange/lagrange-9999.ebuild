@@ -2,6 +2,10 @@
 
 EAPI=8
 
+# Upstream uses Debug automatically for Git checkouts unless a build type is
+# supplied. cmake.eclass otherwise defaults to RelWithDebInfo.
+CMAKE_BUILD_TYPE=Release
+
 inherit cmake git-r3
 
 DESCRIPTION="A Beautiful Gemini Client (live ebuild from dev branch)"
@@ -47,29 +51,26 @@ DOCS=( README.md )
 src_prepare() {
     cmake_src_prepare
 
-    # Remove bundled submodules if present
-    rm -rf lib/the_Foundation lib/sealcurses lib/harfbuzz lib/fribidi || die
-
-    # Force system libraries
-    sed -i \
-        -e '/add_subdirectory(lib\/the_Foundation)/d' \
-        -e '/add_subdirectory(lib\/harfbuzz)/d' \
-        -e '/add_subdirectory(lib\/fribidi)/d' \
-        -e '/add_subdirectory(lib\/sealcurses)/d' \
-        -e 's|if (NOT TARGET the_Foundation::the_Foundation)|if (FALSE)|' \
-        -e 's|if (NOT TARGET harfbuzz-lib)|if (FALSE)|' \
-        -e 's|if (NOT TARGET fribidi-lib)|if (FALSE)|' \
-        -e 's|if (NOT TARGET sealcurses-static)|if (FALSE)|' \
-        CMakeLists.txt || die
+    # Ensure upstream's bundled submodules cannot be selected. Current
+    # Depends.cmake automatically falls back to system packages when these
+    # directories are absent.
+    rm -rf \
+        lib/the_Foundation \
+        lib/sealcurses \
+        lib/harfbuzz \
+        lib/fribidi || die
 }
 
 src_configure() {
+    # Gentoo's cmake.eclass clears CMake's default per-build-type flags.
+    # Define NDEBUG explicitly so Lagrange's debug drawing overlay is omitted.
+    append-cppflags -DNDEBUG
+
     local mycmakeargs=(
         -DENABLE_GUI=$(usex gui)
         -DENABLE_TUI=$(usex ncurses)
 
         -DENABLE_STATIC=OFF
-        -DCMAKE_BUILD_TYPE=Release
 
         -DENABLE_FRIBIDI=$(usex bidi)
         -DENABLE_HARFBUZZ=$(usex harfbuzz)
