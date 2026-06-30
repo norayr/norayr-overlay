@@ -30,7 +30,7 @@ DEPEND="
     dev-libs/libunistring
     dev-libs/openssl:0=
     sys-libs/zlib
-    dev-libs/the_Foundation
+    >=dev-libs/the_Foundation-1.12.0
 
     gui? (
         media-libs/libsdl2
