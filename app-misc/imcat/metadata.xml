@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>norayr@arnet.am</email>
+		<name>norayr chilingarian</name>
+	</maintainer>
+	<longdescription>
+		imcat is a terminal image viewer that displays images using
+		24-bit ANSI colours and automatically resizes them to the terminal.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">stolk/imcat</remote-id>
+	</upstream>
+</pkgmetadata>
