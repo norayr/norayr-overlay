@@ -6,6 +6,10 @@ EAPI=8
 # supplied. cmake.eclass otherwise defaults to RelWithDebInfo.
 CMAKE_BUILD_TYPE=Release
 
+# Use Gentoo's installed libraries. If this array is unset, git-r3 fetches
+# every submodule recursively before src_prepare() is reached.
+EGIT_SUBMODULES=()
+
 inherit cmake git-r3
 
 DESCRIPTION="A Beautiful Gemini Client (live ebuild from dev branch)"
