@@ -63,6 +63,7 @@ RDEPEND="
 	)
 	link-local-messaging? ( net-dns/avahi[dbus] )
 	xmpp? ( dev-libs/libxml2:2 )
+	ircv3? ( >=dev-libs/ibis-0.15.0 )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
