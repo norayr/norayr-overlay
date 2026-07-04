@@ -52,7 +52,7 @@ RDEPEND="
 	>=gui-libs/gtk-4.20:4[introspection?]
 	>=gui-libs/libadwaita-1.8:1[introspection?]
 	>=gui-libs/gtksourceview-5.10:5[introspection?]
-	>=app-text/libspelling-0.4[introspection?]
+	>=app-text/libspelling-0.4
 
 	introspection? ( dev-libs/gobject-introspection )
 	libsecret? ( app-crypt/libsecret )
