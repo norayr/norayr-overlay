@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit mercurial meson xdg
+inherit gnome2-utils mercurial meson xdg
 
 DESCRIPTION="Multi-protocol instant messaging client, Pidgin 3 development branch"
 HOMEPAGE="
@@ -93,3 +93,15 @@ src_configure() {
 
 	meson_src_configure
 }
+
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
+}
+
