@@ -3,8 +3,7 @@
 
 EAPI=8
 
-VALA_USE_DEPEND="vapigen"
-inherit mercurial meson vala
+inherit mercurial meson
 
 DESCRIPTION="Hassle-free Authentication and Security Layer client library"
 HOMEPAGE="
@@ -19,11 +18,10 @@ LICENSE="LGPL-2.1+"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="doc introspection vala"
+IUSE="doc introspection"
 
 REQUIRED_USE="
 	doc? ( introspection )
-	vala? ( introspection )
 "
 
 RDEPEND="
@@ -34,14 +32,12 @@ DEPEND="${RDEPEND}"
 BDEPEND="
 	virtual/pkgconfig
 	doc? ( >=dev-util/gi-docgen-2025.3 )
-	vala? ( $(vala_depend) )
 "
 
 src_configure() {
 	local emesonargs=(
 		$(meson_use doc doc)
 		$(meson_use introspection introspection)
-		$(meson_use vala vapi)
 	)
 
 	meson_src_configure
