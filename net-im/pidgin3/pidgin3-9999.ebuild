@@ -43,6 +43,7 @@ RDEPEND="
 	>=dev-libs/seagull-0.8.1
 	>=dev-libs/gplugin-0.44.2:0/0.44
 	<dev-libs/gplugin-0.45
+	>=dev-libs/xeme-0.1.0
 
 	>=media-libs/gstreamer-1.14:1.0
 	>=media-libs/gst-plugins-base-1.14:1.0
