@@ -22,6 +22,16 @@ FONT_SUFFIX="otb"
 FONT_S="${S}/genotb"
 FONTDIR="/usr/share/fonts/uw-ttyp0"
 
+src_configure() {
+	# Upstream ships a small custom configure script, not Autoconf.
+	# Therefore econf cannot be used: it adds --build, --host, etc.
+	./configure \
+		--prefix="${EPREFIX}/usr" \
+		--otbdir="${EPREFIX}${FONTDIR}" \
+		--conslinuxdir="${EPREFIX}/usr/share/consolefonts/uw-ttyp0" \
+		|| die "configure failed"
+}
+
 src_compile() {
 	local file codesets=""
 
