@@ -69,18 +69,19 @@ src_install() {
 pkg_postinst() {
 	font_pkg_postinst
 
+	elog "To load a large Armenian Unicode console font:"
+	elog "  setfont /usr/share/consolefonts/uw-ttyp0/Ttyp0-30-Arm.psf.gz"
 	elog
-	elog "To load the 16-pixel Armenian font on a Linux virtual console, run as root:"
-	elog "  setfont /usr/share/consolefonts/uw-ttyp0/Ttyp0-16-Arm.psf.gz"
+	elog "For the 512-glyph Armenian-oriented codeset:"
+	elog "  setfont /usr/share/consolefonts/uw-ttyp0/Ttyp0-30-Armn_M.psf.gz"
 	elog
-	elog "For the larger 512-glyph Armenian-oriented codeset, use:"
-	elog "  setfont /usr/share/consolefonts/uw-ttyp0/Ttyp0-16-Armn_M.psf.gz"
+	elog "The Armn_M font contains more glyphs; it is not visually larger"
+	elog "than Arm when both use the same pixel height."
 	elog
-	elog "For OpenRC boot, put the chosen full path in /etc/conf.d/consolefont:"
-	elog "  consolefont=\"/usr/share/consolefonts/uw-ttyp0/Ttyp0-16-Arm.psf.gz\""
-	elog "Then enable the service:"
+	elog "For OpenRC boot, set in /etc/conf.d/consolefont:"
+	elog "  consolefont=\"/usr/share/consolefonts/uw-ttyp0/Ttyp0-30-Arm.psf.gz\""
+	elog "Then run:"
 	elog "  rc-update add consolefont boot"
-	elog
-	elog "The OTB Fontconfig family name is 'Ttyp0 OTB'.  Example for xterm:"
-	elog "  xterm -sb -u8 -fa 'Ttyp0 OTB' -fs 16"
 }
+
+
