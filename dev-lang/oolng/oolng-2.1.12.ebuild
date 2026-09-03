@@ -55,6 +55,6 @@ src_install() {
 		SUDO_USER= \
 		install
 
-			dodoc AUTHORS ChangeLog INSTALL NEWS PROBLEMS README README.md README.MACOS README.WIN32 known_issues.md
+			dodoc INSTALL PROBLEMS README README.md README.MACOS README.WIN32 known_issues.md
 
 }
