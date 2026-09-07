@@ -47,6 +47,11 @@ src_compile() {
 		SIZES_CONS_LINUX="${CONSOLE_SIZES}"
 	)
 
+	# Build upstream's real ISO10646-1 BDF fonts.  Do not install the
+	# LC_* BDF files used as intermediates for Linux-console generation:
+	# those are remapped 256/512-slot console layouts, not Unicode BDFs.
+	use bdf && emake bdf
+
 	use X && make_args+=( GEN_OTB=1 )
 
 	emake "${make_args[@]}"
@@ -77,22 +82,17 @@ src_install() {
 		done
 	done
 
-	# Optional raw BDF versions of the same three script-oriented repertoires.
-	# These LC_* BDF files are generated as inputs to the Linux-console build.
+	# Optional raw X11 BDF fonts.  BDF has no Linux-console 256/512-glyph
+	# restriction, so install upstream's proper ISO10646-1 Unicode BDFs.
+	# Each one contains Latin, Cyrillic, Armenian, Georgian, and the other
+	# Unicode glyphs provided by UW ttyp0.
 	if use bdf; then
 		insinto /usr/share/fonts/uw-ttyp0/bdf
-		for size in ${CONSOLE_SIZES}; do
-			for upstream in Arm Geo Koi; do
-				case ${upstream} in
-					Arm) installed=Armenian ;;
-					Geo) installed=Georgian ;;
-					Koi) installed=Cyrillic ;;
-				esac
-
-				src="genbdf/t0-${size}-LC_${upstream}.bdf"
-				[[ -f ${src} ]] || die "missing generated BDF font: ${src}"
-				newins "${src}" "Ttyp0-${size}-${installed}.bdf"
-			done
+		for src in genbdf/t0-*-uni.bdf; do
+			[[ -f ${src} ]] || die "no Unicode BDF fonts were generated"
+			size=${src##*/t0-}
+			size=${size%-uni.bdf}
+			newins "${src}" "Ttyp0-${size}-Unicode.bdf"
 		done
 	fi
 
@@ -133,7 +133,10 @@ pkg_postinst() {
 
 	if use bdf; then
 		elog
-		elog "Raw BDF Armenian, Georgian and Cyrillic repertoire fonts were installed in:"
+		elog "Unicode ISO10646-1 BDF fonts were installed in:"
 		elog "  /usr/share/fonts/uw-ttyp0/bdf"
+		elog "Each BDF contains Latin, Armenian, Georgian and Cyrillic glyphs."
+		elog "For example, inspect the 22-pixel font with:"
+		elog "  fc-query --format='%{charset}\n' /usr/share/fonts/uw-ttyp0/bdf/Ttyp0-22-Unicode.bdf"
 	fi
 }
