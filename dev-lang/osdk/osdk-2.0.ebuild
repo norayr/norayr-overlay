@@ -17,7 +17,7 @@ src_compile() {
 	emake -C osdk/main/compiler \
 		RELEASE=1 \
 		CC="$(tc-getCC)" \
-		CFLAGS="${CFLAGS}" \
+		CFLAGS="${CFLAGS} -std=gnu17" \
 		LDFLAGS="${LDFLAGS}"
 }
 
