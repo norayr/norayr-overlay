@@ -21,7 +21,6 @@ DEPEND="
 
 RDEPEND="${DEPEND}"
 
-
 src_compile() {
 	append-cflags -std=gnu17
 
@@ -31,7 +30,7 @@ src_compile() {
 		CXX="$(tc-getCXX)" \
 		AR="$(tc-getAR)" \
 		RANLIB="$(tc-getRANLIB)" \
-		CURSES_LIB="-lncurses"
+		CURSES_LIB="-lncurses" \
 		CXXSTD="-std=c++14"
 }
 
