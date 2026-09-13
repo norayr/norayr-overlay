@@ -16,6 +16,7 @@ KEYWORDS="~amd64 ~x86"
 
 DEPEND="
 	sys-libs/ncurses:0=
+	media-libs/freeimage
 "
 
 RDEPEND="${DEPEND}"
@@ -31,6 +32,7 @@ src_compile() {
 		AR="$(tc-getAR)" \
 		RANLIB="$(tc-getRANLIB)" \
 		CURSES_LIB="-lncurses"
+		CXXSTD="-std=c++14"
 }
 
 src_install() {
