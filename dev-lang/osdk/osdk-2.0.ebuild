@@ -14,10 +14,12 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 src_compile() {
-	emake -C osdk/main/compiler \
+	emake -C osdk/main \
 		RELEASE=1 \
 		CC="$(tc-getCC)" \
+		CXX="$(tc-getCXX)" \
 		CFLAGS="${CFLAGS} -std=gnu17" \
+		CXXFLAGS="${CXXFLAGS}" \
 		LDFLAGS="${LDFLAGS}"
 }
 
