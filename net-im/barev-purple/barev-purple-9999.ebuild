@@ -12,15 +12,25 @@ EGIT_REPO_URI="https://codeberg.org/norayr/barev-purple.git"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~x86 ~x86_64 ~arm ~arm64 ~ppc ~ppc64 ~riscv"
+IUSE="gstreamer"
 
 # Needs pkg-config for plugindir/datadir lookups and for cflags/libs
 BDEPEND="virtual/pkgconfig"
 
-# Build-time headers/libs (Makefile uses pkg-config for these)
+# Build-time headers/libs (Makefile uses pkg-config for these).
+# When USE=gstreamer we require pidgin itself to be built with the same
+# voice/video support, otherwise the calling UI (Conversation menu items,
+# call windows) is not present and our media caps go nowhere.
 DEPEND="
-  net-im/pidgin
   dev-libs/glib:2
   dev-libs/libxml2
+  gstreamer? (
+    net-im/pidgin[gstreamer,v4l]
+    media-libs/gstreamer:1.0
+    media-libs/gst-plugins-base:1.0
+    >=net-libs/farstream-0.2.7:0.2
+  )
+  !gstreamer? ( net-im/pidgin )
 "
 
 # plugin needs yggdrasil running
@@ -31,7 +41,8 @@ RDEPEND="
 
 src_compile() {
   emake \
-    CC="$(tc-getCC)"
+    CC="$(tc-getCC)" \
+    USE_VV=$(usex gstreamer 1 0)
 }
 
 src_install() {
