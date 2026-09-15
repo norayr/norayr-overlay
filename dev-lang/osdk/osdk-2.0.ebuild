@@ -24,6 +24,11 @@ DEPEND="
 
 RDEPEND="${DEPEND}"
 
+src_prepare() {
+	sed -i 's/\r$//' osdk/main/TapTool/sources/TapTool.cpp || die
+	default
+}
+
 src_compile() {
 	append-cflags -std=gnu17
 
