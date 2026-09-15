@@ -2,11 +2,14 @@ EAPI=8
 
 inherit flag-o-matic toolchain-funcs
 
-DESCRIPTION="LCC-derived C cross-compiler for Oric 6502 computers"
+DESCRIPTION="Software development kit and cross-development tools for Oric computers"
 HOMEPAGE="https://osdk.org/ https://github.com/Oric-Software-Development-Kit/osdk"
 SRC_URI="https://github.com/Oric-Software-Development-Kit/osdk/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 
+PATCHES=(
+	"${FILESDIR}/${P}-taptool-fgets.patch"
+)
 
 S="${WORKDIR}/osdk-${PV}"
 
