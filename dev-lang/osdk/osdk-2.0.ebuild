@@ -9,6 +9,7 @@ SRC_URI="https://github.com/Oric-Software-Development-Kit/osdk/archive/refs/tags
 
 PATCHES=(
 	"${FILESDIR}/${P}-taptool-fgets.patch"
+	"${FILESDIR}/${P}-tap2cd-fgets.patch"
 )
 
 S="${WORKDIR}/osdk-${PV}"
@@ -25,7 +26,10 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	sed -i 's/\r$//' osdk/main/TapTool/sources/TapTool.cpp || die
+	sed -i 's/\r$//' \
+		osdk/main/TapTool/sources/TapTool.cpp \
+		osdk/main/tap2cd/sources/tap2cd.c || die
+
 	default
 }
 
