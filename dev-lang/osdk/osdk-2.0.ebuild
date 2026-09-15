@@ -31,7 +31,7 @@ src_compile() {
 		AR="$(tc-getAR)" \
 		RANLIB="$(tc-getRANLIB)" \
 		CURSES_LIB="-lncurses" \
-		CXXSTD="-std=c++14"
+		CXXSTD="-std=c++20"
 }
 
 src_install() {
