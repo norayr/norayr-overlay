@@ -51,6 +51,25 @@ src_install() {
 
 	dosym osdk-compiler /usr/bin/lcc65
 	dosym osdk-compiler /usr/bin/rcc16
+
+	dobin \
+		osdk/main/link65/link65 \
+		osdk/main/pictconv/pictconv \
+		osdk/main/bas2tap/bas2tap \
+		osdk/main/filepack/filepack \
+		osdk/main/old2mfm/old2mfm \
+		osdk/main/opt65/opt65 \
+		osdk/main/tap2dsk/tap2dsk \
+		osdk/main/Ym2Mym/Ym2Mym \
+		osdk/main/bin2txt/bin2txt \
+		osdk/main/FloppyBuilder/FloppyBuilder \
+		osdk/main/MemMap/memmap \
+		osdk/main/TapTool/TapTool \
+		osdk/main/DskTool/DskTool \
+		osdk/main/header/header \
+		osdk/main/macrosplitter/macrosplitter \
+		osdk/main/tap2cd/tap2cd \
+		osdk/main/xa/xa
 }
 
 
