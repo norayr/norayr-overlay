@@ -1,0 +1,15 @@
+--- a/osdk/main/tap2cd/sources/tap2cd.c
++++ b/osdk/main/tap2cd/sources/tap2cd.c
+@@ -326,7 +326,11 @@ void ask_name(char *name)
+       printf("Stored name is %s, enter new name (or RETURN to keep): ",name);
+     else
+       printf("Program has no stored name, enter a name: ");
+-    gets_s(reply,sizeof(reply));
++    if (fgets(reply, sizeof(reply), stdin) == NULL)
++      reply[0] = 0;
++    else
++      reply[strcspn(reply, "\r\n")] = 0;
++
+     if (reply[0]) strcpy(name,reply);
+   } while (name[0]==0);
+ }
