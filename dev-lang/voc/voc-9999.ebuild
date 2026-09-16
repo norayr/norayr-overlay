@@ -21,7 +21,8 @@ BDEPEND="
 inherit git-r3 multilib
 
 src_compile() {
-    local libdir="/usr/$(get_libdir)"
+    local buildroot="${T}/voc"
+    local libdir="${buildroot}/lib"
 
     if use gcc; then
         export CC=gcc
@@ -32,7 +33,7 @@ src_compile() {
     fi
 
     # Build the compiler, libraries, and confidence tests without root access.
-    emake -j1 PREFIX=/usr LIBDIR="${libdir}"
+    emake -j1 INSTALLDIR="${buildroot}" LIBDIR="${libdir}"
 
     if use ocat; then
         local os datamodel compiler flavour symdir
