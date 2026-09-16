@@ -22,7 +22,7 @@ BDEPEND="
 inherit multilib
 
 src_compile() {
-    local buildroot="${T}/voc"
+    local buildroot="${WORKDIR}/voc-build"
     local libdir="${buildroot}/lib"
 
     if use gcc; then
