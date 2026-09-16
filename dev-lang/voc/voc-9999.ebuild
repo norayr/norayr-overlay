@@ -21,7 +21,7 @@ BDEPEND="
 inherit git-r3 multilib
 
 src_compile() {
-    local buildroot="${WORKDIR}/voc-build"
+    local buildroot="${S}/.voc-build"
     local libdir="${buildroot}/lib"
 
     if use gcc; then
