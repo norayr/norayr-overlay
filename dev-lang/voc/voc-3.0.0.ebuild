@@ -2,7 +2,8 @@ EAPI=8
 
 DESCRIPTION="Vishap Oberon Compiler"
 HOMEPAGE="https://github.com/vishapoberon/compiler"
-EGIT_REPO_URI="https://github.com/vishapoberon/compiler.git"
+SRC_URI="https://github.com/vishapoberon/compiler/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+S="${WORKDIR}/compiler-${PV}"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -18,7 +19,7 @@ BDEPEND="
     tcc?   ( dev-lang/tcc )
 "
 
-inherit git-r3 multilib
+inherit multilib
 
 src_compile() {
     local libdir="/usr/$(get_libdir)"
