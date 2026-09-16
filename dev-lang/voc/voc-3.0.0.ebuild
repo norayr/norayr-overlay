@@ -22,8 +22,7 @@ BDEPEND="
 inherit multilib
 
 src_compile() {
-    local buildroot="${S}/.voc-build"
-    local libdir="${buildroot}/lib"
+    local libdir="/usr/$(get_libdir)"
 
     if use gcc; then
         export CC=gcc
@@ -33,8 +32,12 @@ src_compile() {
         export CC=tcc
     fi
 
-    # Build the compiler, libraries, and confidence tests without root access.
-    emake -j1 INSTALLDIR="${buildroot}" LIBDIR="${libdir}"
+    unset OBERON MODULES
+    export VOCROOT="${S}/install"
+    export VOCLIBDIR="${S}/install/lib"
+
+    # Compile final paths while tests use the local installation image.
+    emake -j1 PREFIX=/usr LIBDIR="${libdir}"
 
     if use ocat; then
         local os datamodel compiler flavour symdir
@@ -53,6 +56,8 @@ src_compile() {
 
 src_install() {
     local libdir="/usr/$(get_libdir)"
+
+    unset OBERON MODULES VOCROOT VOCLIBDIR
 
     # DESTDIR stages files while the compiler retains its final runtime paths.
     emake -j1 PREFIX=/usr LIBDIR="${libdir}" DESTDIR="${D}" install
