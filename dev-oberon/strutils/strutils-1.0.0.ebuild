@@ -17,7 +17,6 @@ BDEPEND="
 RDEPEND="
 	dev-lang/voc
 "
-
 src_compile() {
 	local vocroot="${T}/voc"
 	local system_voc="${BROOT%/}/usr/share/voc"
@@ -41,9 +40,12 @@ src_compile() {
 
 	voc -s ../src/strUtils.Mod \
 		|| die "failed to compile strUtils"
+
+	$(tc-getAR) rcs libvoc-strutils.a \
+		strTypes.o \
+		strUtils.o \
+		|| die "failed to create libvoc-strutils.a"
 }
-
-
 
 
 src_install() {
