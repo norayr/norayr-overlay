@@ -19,7 +19,21 @@ RDEPEND="
 "
 
 src_compile() {
-	mkdir -p build || die
+	local vocroot="${T}/voc"
+	local system_voc="${BROOT%/}/usr/share/voc"
+	local libdir="${BROOT%/}/usr/$(get_libdir)"
+
+	mkdir -p "${vocroot}" build || die
+
+	# VOC may create/update symbol files for imported modules.
+	# Give it a writable copy of the installed module tree.
+	cp -a "${system_voc}/." "${vocroot}/" \
+		|| die "failed to prepare writable VOCROOT"
+
+	unset OBERON MODULES
+	export VOCROOT="${vocroot}"
+	export VOCLIBDIR="${libdir}"
+
 	cd build || die
 
 	voc -s ../src/strTypes.Mod \
@@ -27,12 +41,10 @@ src_compile() {
 
 	voc -s ../src/strUtils.Mod \
 		|| die "failed to compile strUtils"
-
-	$(tc-getAR) rcs libvoc-strutils.a \
-		strTypes.o \
-		strUtils.o \
-		|| die "failed to create libvoc-strutils.a"
 }
+
+
+
 
 src_install() {
 	insinto /usr/share/voc/2/sym
