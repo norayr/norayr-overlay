@@ -1,6 +1,6 @@
 EAPI=8
 
-inherit multilib toolchain-funcs
+inherit multilib
 
 DESCRIPTION="Utility combining features of watch and cat"
 HOMEPAGE="https://github.com/norayr/watchcat"
@@ -25,21 +25,24 @@ RDEPEND="
 "
 
 src_compile() {
-	local libdir="${ESYSROOT}/usr/$(get_libdir)"
+	local vocroot="${T}/voc"
+	local system_voc="${BROOT%/}/usr/share/voc"
+	local libdir="${BROOT%/}/usr/$(get_libdir)"
 
-	mkdir -p build || die
+	mkdir -p "${vocroot}" build || die
+
+	cp -a "${system_voc}/." "${vocroot}/" \
+		|| die "failed to prepare writable VOCROOT"
+
+	unset OBERON MODULES
+	export VOCROOT="${vocroot}"
+	export VOCLIBDIR="${libdir}"
+
+	# Static Oberon libraries must appear after watchcat.c on the
+	# final C linker command line.
+	export LDFLAGS="${LDFLAGS} -lvoc-pipes -lvoc-time -lvoc-strutils"
+
 	cd build || die
-
-	# VOC currently expects imported module objects to be available
-	# while linking. Extract the packaged module archives locally.
-	$(tc-getAR) x "${libdir}/libvoc-strutils.a" \
-		|| die "failed to extract strutils"
-
-	$(tc-getAR) x "${libdir}/libvoc-time.a" \
-		|| die "failed to extract time"
-
-	$(tc-getAR) x "${libdir}/libvoc-pipes.a" \
-		|| die "failed to extract pipes"
 
 	voc -m ../src/watchcat.Mod \
 		|| die "failed to build watchcat"
@@ -47,11 +50,6 @@ src_compile() {
 
 src_install() {
 	dobin build/watchcat
-
-	if [[ -f readme.md ]]; then
-		dodoc readme.md
-	elif [[ -f README.md ]]; then
-		dodoc README.md
-	fi
+	dodoc readme.md
 }
 

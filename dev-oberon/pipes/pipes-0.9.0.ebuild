@@ -24,7 +24,19 @@ RDEPEND="
 "
 
 src_compile() {
-	mkdir -p build || die
+	local vocroot="${T}/voc"
+	local system_voc="${BROOT%/}/usr/share/voc"
+	local libdir="${BROOT%/}/usr/$(get_libdir)"
+
+	mkdir -p "${vocroot}" build || die
+
+	cp -a "${system_voc}/." "${vocroot}/" \
+		|| die "failed to prepare writable VOCROOT"
+
+	unset OBERON MODULES
+	export VOCROOT="${vocroot}"
+	export VOCLIBDIR="${libdir}"
+
 	cd build || die
 
 	voc -s ../src/pipes.Mod \
@@ -44,4 +56,3 @@ src_install() {
 	insinto "/usr/$(get_libdir)"
 	doins build/libvoc-pipes.a
 }
-
