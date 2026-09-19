@@ -46,7 +46,7 @@ src_compile() {
 }
 
 src_install() {
-	dobin "$(cargo_target_dir)"/release/sustain
+	dobin "$(cargo_target_dir)"/sustain
 
 	domenu data/io.github.open_sustain.sustain.desktop
 
