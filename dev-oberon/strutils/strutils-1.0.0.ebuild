@@ -29,6 +29,12 @@ src_compile() {
 	cp -a "${system_voc}/." "${vocroot}/" \
 		|| die "failed to prepare writable VOCROOT"
 
+	# Drop an installed strutils from the copy: voc writes no new .sym
+	# when it finds an unchanged interface there, and src_install needs it.
+	rm -f "${vocroot}"/*/sym/strTypes.sym "${vocroot}"/*/sym/strUtils.sym \
+		"${vocroot}"/*/include/strTypes.h "${vocroot}"/*/include/strUtils.h \
+		|| die "failed to drop the installed strutils from VOCROOT"
+
 	unset OBERON MODULES
 	export VOCROOT="${vocroot}"
 	export VOCLIBDIR="${libdir}"
