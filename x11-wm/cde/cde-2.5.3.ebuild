@@ -3,6 +3,8 @@
 
 EAPI=8
 
+inherit flag-o-matic
+
 DESCRIPTION="The Common Desktop Environment, the classic UNIX desktop"
 HOMEPAGE="https://sourceforge.net/projects/cdesktopenv/"
 SRC_URI="mirror://sourceforge/cdesktopenv/${P}.tar.gz"
@@ -77,6 +79,7 @@ src_prepare() {
 }
 
 src_configure() {
+  append-cflags -std=gnu17
   # Upstream defaults already install into /usr/dt and expect
   # startx /usr/dt/bin/Xsession, so we don't try to FHS-relocate here.
   econf \
