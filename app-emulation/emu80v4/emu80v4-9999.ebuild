@@ -50,13 +50,10 @@ src_compile() {
 
 src_install() {
     if use qt; then
-        cd src || die
-        dobin Emu80qt
+        dobin src/Emu80qt
     elif use sdl; then
-        emake -f Makefile.sdlwx
         dobin Emu80
     elif use lite; then
-        emake -f Makefile.lite
         dobin Emu80lite
     fi
 
@@ -67,5 +64,6 @@ src_install() {
     doins "${T}/emu80.run"
 
     dodoc COPYING.txt whatsnew.txt
-    dodoc doc/*
+    dodoc -r doc/*
 }
+
