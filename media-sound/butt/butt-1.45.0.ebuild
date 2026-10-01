@@ -42,14 +42,13 @@ src_prepare() {
   eautoreconf
 }
 
+inherit autotools flag-o-matic
+
 src_configure() {
-  econf \
-    $(use_enable alsa) \
-    $(use_enable flac) \
-    $(use_enable jack) \
-    $(use_enable opus) \
-    $(use_enable vorbis) \
-    $(use_enable aac)
+    append-ldflags "-L${EPREFIX}/usr/$(get_libdir)/fltk"
+
+    econf \
+        $(use_enable aac)
 }
 
 src_install() {
