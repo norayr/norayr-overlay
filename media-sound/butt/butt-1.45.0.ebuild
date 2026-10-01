@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit autotools
+inherit flag-o-matic
 
 DESCRIPTION="Broadcast Using This Tool - audio streaming client for Icecast and SHOUTcast"
 HOMEPAGE="https://danielnoethen.de/butt/"
@@ -13,36 +13,24 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 
-IUSE="aac alsa flac jack opus vorbis"
+IUSE="aac"
 
 DEPEND="
-  x11-libs/fltk:1[static-libs]
-  media-libs/portaudio
-  media-libs/portmidi
-  media-sound/lame
-  media-libs/libogg
-  media-libs/libsamplerate
-  net-misc/curl
-  dev-libs/openssl:=
-  sys-apps/dbus
-  alsa? ( media-libs/alsa-lib )
-  flac? ( media-libs/flac )
-  jack? ( virtual/jack )
-  opus? ( media-libs/opus )
-  vorbis? ( media-libs/libvorbis )
-  aac? ( media-libs/fdk-aac )
+    <x11-libs/fltk-1.4:1
+    media-libs/portaudio
+    media-libs/portmidi
+    media-sound/lame
+    media-libs/libogg
+    media-libs/libvorbis
+    media-libs/opus
+    media-libs/flac
+    media-libs/libsamplerate
+    net-misc/curl
+    dev-libs/openssl:=
+    sys-apps/dbus
+    aac? ( media-libs/fdk-aac )
 "
-
 RDEPEND="${DEPEND}"
-
-S="${WORKDIR}/butt-${PV}"
-
-src_prepare() {
-  default
-  eautoreconf
-}
-
-inherit autotools flag-o-matic
 
 src_configure() {
     append-ldflags "-L${EPREFIX}/usr/$(get_libdir)/fltk"
@@ -51,8 +39,5 @@ src_configure() {
         $(use_enable aac)
 }
 
-src_install() {
-  default
-  dobin src/butt
-  doman butt.1
-}
+
+
