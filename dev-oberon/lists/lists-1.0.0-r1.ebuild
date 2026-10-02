@@ -33,6 +33,12 @@ src_compile() {
 	cp -a "${system_voc}/." "${vocroot}/" \
 		|| die "failed to prepare writable VOCROOT"
 
+	# Drop this package from the copied VOC tree so voc cannot reuse
+	# stale symbols/headers from an already-installed older revision.
+	rm -f "${vocroot}"/*/sym/List.sym "${vocroot}"/*/sym/StringList.sym \
+		"${vocroot}"/*/include/List.h "${vocroot}"/*/include/StringList.h \
+		|| die "failed to drop the installed package from VOCROOT"
+
 	unset OBERON MODULES
 	export VOCROOT="${vocroot}"
 	export VOCLIBDIR="${libdir}"
