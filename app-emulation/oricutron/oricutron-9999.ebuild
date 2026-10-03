@@ -13,6 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="sdl2"
 
 RDEPEND="
+	app-emulation/oric-roms
 	sdl2? (
 		media-libs/libsdl2
 	)
