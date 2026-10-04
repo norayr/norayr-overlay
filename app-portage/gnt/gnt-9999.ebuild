@@ -6,7 +6,7 @@ DESCRIPTION="Gentoo package and filesystem tools written in Free Pascal"
 HOMEPAGE="https://github.com/norayr/gnt"
 EGIT_REPO_URI="https://github.com/norayr/gnt.git"
 
-LICENSE="all-rights-reserved"
+LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS=""
 
