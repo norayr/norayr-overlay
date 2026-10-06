@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <longdescription lang="en">
+    Ulm's Oberon compiler with native AMD64 and i386 backends, a database-free
+    command-line driver, and statically linked runtime and general libraries.
+    Library definitions and sources are installed for use by the compiler.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">norayr/ulmo</remote-id>
+  </upstream>
+</pkgmetadata>
