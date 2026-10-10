@@ -4,10 +4,10 @@ inherit multilib
 
 DESCRIPTION="Vishap Oberon Compiler with optional native shared modules and vish"
 HOMEPAGE="https://github.com/vishapoberon/compiler"
-# Local development snapshot: not an upstream release or a remote live checkout.
-SRC_URI="${P}.tar.gz"
-S="${WORKDIR}/${P}"
-RESTRICT="fetch"
+# Reproducible snapshot of the compiler's native-shared-modules branch.
+VOC_COMMIT="15d3c3e47e1d8ceb5d3de10926298d66deb01b0e"
+SRC_URI="https://github.com/vishapoberon/compiler/archive/${VOC_COMMIT}.tar.gz -> ${P}-${VOC_COMMIT}.tar.gz"
+S="${WORKDIR}/compiler-${VOC_COMMIT}"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -23,12 +23,6 @@ BDEPEND="
 	clang? ( sys-devel/clang )
 	tcc? ( dev-lang/tcc )
 "
-
-pkg_nofetch() {
-	einfo "This ebuild tests a local VOC development snapshot."
-	einfo "Copy ${P}.tar.gz into ${DISTDIR} before emerging this package."
-	einfo "Snapshot and test instructions are in doc/GentooModular.md in the VOC checkout."
-}
 
 modular_make() {
 	emake -j1 -f src/tools/vish/Makefile \
