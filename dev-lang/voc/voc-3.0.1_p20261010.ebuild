@@ -2,10 +2,10 @@ EAPI=8
 
 inherit multilib
 
-DESCRIPTION="Vishap Oberon Compiler with optional native shared modules and vish"
+DESCRIPTION="Vishap Oberon Compiler with optional native shared modules and hresh"
 HOMEPAGE="https://github.com/vishapoberon/compiler"
 # Reproducible snapshot of the compiler's primary branch.
-VOC_COMMIT="9a1b36ef97abb197305e76ed0613f573f6990129"
+VOC_COMMIT="b8bd8c0393bdb3c72c261bd6873a5162995bdf58"
 SRC_URI="https://github.com/vishapoberon/compiler/archive/${VOC_COMMIT}.tar.gz -> ${P}-${VOC_COMMIT}.tar.gz"
 S="${WORKDIR}/compiler-${VOC_COMMIT}"
 
@@ -25,7 +25,7 @@ BDEPEND="
 "
 
 modular_make() {
-	emake -j1 -f src/tools/vish/Makefile \
+	emake -j1 -f src/tools/hresh/Makefile \
 		VOC="${S}/voc" VOCROOT="${S}/install" VOCLIBDIR="${S}/install/lib" \
 		RESOURCE_ROOT=/usr/share/voc WITH_X11="$(usex X 1 0)" MODEL=2 "$@"
 }
@@ -71,13 +71,13 @@ src_compile() {
 src_test() {
 	if use modular; then
 		# Installed RUNPATHs intentionally do not name the temporary build tree.
-		export LD_LIBRARY_PATH="${S}/build/vish/modules/2:${S}/install/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+		export LD_LIBRARY_PATH="${S}/build/hresh/modules/2:${S}/install/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 		modular_make test-library test demo
 		modular_make demo HOST_MODE=mD
-		VOCROOT="${S}/install" VOCLIBDIR="${S}/build/vish/modules/2" \
-			OBERON="${S}/build/vish/modules/2" \
+		VOCROOT="${S}/install" VOCLIBDIR="${S}/build/hresh/modules/2" \
+			OBERON="${S}/build/hresh/modules/2" \
 			emake -j1 -C src/test/module-tutorial test \
-			VOC="${S}/build/vish/compiler/voc" VISH="${S}/build/vish/vish"
+			VOC="${S}/build/hresh/compiler/voc" HRESH="${S}/build/hresh/hresh"
 	fi
 }
 
@@ -89,7 +89,7 @@ src_install() {
 	if use modular; then
 		modular_make install-modular DESTDIR="${D}" \
 			INSTALL_ROOT=/usr/share/voc INSTALL_LIBDIR="${libdir}"
-		dobin build/vish/vish
+		dobin build/hresh/hresh
 		dodoc doc/SharedModules.md doc/ModuleTutorial.md
 		docinto examples/shared-libraries
 		dodoc src/test/shared-libraries/{LibraryDemo.Mod,LibraryMain.Mod,README.md}
@@ -105,7 +105,7 @@ pkg_postinst() {
 	if use modular; then
 		elog "The optional shared modules are in /usr/$(get_libdir)/voc/modular/2."
 		elog "Use voc -md Main.Mod (shared core) or voc -mD Main.Mod (embedded core)."
-		elog "vish runs exported Module.Command procedures; -m/-M keep conventional linking."
+		elog "hresh runs exported Module.Command procedures; -m/-M keep conventional linking."
 		elog "See /usr/share/doc/${PF}/ModuleTutorial.md* for a gentle introduction."
 	fi
 }
