@@ -46,7 +46,13 @@ modular_make() {
 		VOC="${S}/voc" VOCROOT="${S}/install" VOCLIBDIR="${S}/install/lib" \
 		RESOURCE_ROOT=/usr/share/voc INSTALL_LIBDIR="/usr/$(get_libdir)" \
 		VOC_RUNPATH="\$\$ORIGIN:/usr/$(get_libdir)/voc/modular/2" \
-		WITH_X11="$(usex X 1 0)" WITH_NETWORK="$(usex network 1 0)" MODEL=2 "$@"
+		WITH_X11="$(usex X 1 0)" WITH_CAIRO=0 WITH_RAYLIB=0 \
+		WITH_NETWORK="$(usex network 1 0)" MODEL=2 "$@"
+}
+
+has_separate_bindings() {
+	# Keep supporting the published 4.0 archive's unified library target.
+	grep -q '^bindings:' src/tools/hresh/Makefile
 }
 
 src_compile() {
@@ -69,6 +75,9 @@ src_compile() {
 
 	if use modular; then
 		modular_make libraries all
+		if use X && has_separate_bindings; then
+			modular_make bindings
+		fi
 	fi
 
 	if use ocat; then
@@ -95,6 +104,9 @@ src_test() {
 		NETWORK="$(usex network 1 0)"
 	if use modular; then
 		modular_make test test-tools test-library demo
+		if use X && has_separate_bindings; then
+			modular_make test-bindings
+		fi
 		modular_make demo HOST_MODE=mD
 		VOCROOT="${S}/install" VOCLIBDIR="${S}/build/hresh/modules/2" \
 			OBERON="${S}/build/hresh/modules/2" \
@@ -109,7 +121,11 @@ src_install() {
 	emake -j1 PREFIX=/usr LIBDIR="${libdir}" DESTDIR="${D}" install
 
 	if use modular; then
-		modular_make install-modular DESTDIR="${D}" \
+		local target=install-modular
+		if use X && has_separate_bindings; then
+			target=install-modular-bindings
+		fi
+		modular_make "${target}" DESTDIR="${D}" \
 			INSTALL_ROOT=/usr/share/voc INSTALL_LIBDIR="${libdir}"
 		dobin build/hresh/hresh
 		dodoc doc/SharedModules.md doc/ModuleTutorial.md
@@ -125,9 +141,9 @@ src_install() {
 	dodoc ReadMe.md doc/ReleaseNotes-4.0.md
 	# Preserve the separate upstream licence texts alongside their provenance.
 	local package file
-	for package in src/ports/*; do
-		[[ -d ${package} ]] || continue
-		docinto "ports/${package##*/}"
+	for package in src/ports/* src/ports/*/*; do
+		[[ -d ${package} && -f ${package}/PORT.toml ]] || continue
+		docinto "ports/${package#src/ports/}"
 		for file in "${package}"/{PORT*.toml,LICENSE*,COPYING*,license*}; do
 			[[ -f ${file} ]] || continue
 			dodoc "${file}"
