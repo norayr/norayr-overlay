@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>norayr@arnet.am</email>
+    <name>Norayr Chilingarian</name>
+  </maintainer>
+  <use>
+    <flag name="gcc">Use GCC as the C backend</flag>
+    <flag name="clang">Use Clang as the C backend</flag>
+    <flag name="tcc">Use Tiny C as the C backend</flag>
+    <flag name="ocat">Build the Oberon text-file conversion tool</flag>
+    <flag name="modular">Build shared modules, hresh and its compiler, browser and editor (Linux with glibc)</flag>
+    <flag name="network">Build the Linux Internet, HTTP, TLS, HTTPS and Gemini libraries</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">vishapoberon/compiler</remote-id>
+  </upstream>
+</pkgmetadata>
