@@ -45,6 +45,15 @@ src_unpack() {
 	if ! use accessibility; then
 		grep -Fq '"accesskit"' "${app_manifest}" || die "upstream AccessKit features changed"
 		sed -i 's/"accesskit", //' "${app_manifest}" || die
+
+		# Cargo unifies crate features across the dependency graph. Some
+		# applications also enable AccessKit from their internal UI crate.
+		# Removing it only from the executable manifest is insufficient.
+		local ui_manifest="${S}/crates/ui-egui/Cargo.toml"
+		if [[ -f ${ui_manifest} ]] && grep -Fq '"accesskit"' "${ui_manifest}"; then
+			sed -i -e 's/"accesskit", //g' -e 's/, "accesskit"//g' \
+				"${ui_manifest}" || die
+		fi
 	fi
 	# The extra Wayland clipboard integration is not required for X11.
 	local manifest="${S}/apps/${PN}/Cargo.toml"
