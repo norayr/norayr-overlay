@@ -1,0 +1,24 @@
+diff --git a/apps/photocraft/src/services.rs b/apps/photocraft/src/services.rs
+--- a/apps/photocraft/src/services.rs
++++ b/apps/photocraft/src/services.rs
+@@ -387,7 +387,7 @@
+ /// only, so a screenshot tool or clipboard manager that offers just `image/jpeg`, `image/bmp` or
+ /// `image/webp` pasted nothing. Reads the other `image/*` types through the same data-control
+ /// protocol arboard uses, and decodes them with our own codecs. `None` off Wayland.
+-#[cfg(target_os = "linux")]
++#[cfg(any())] // X11-only Gentoo build: wl-clipboard-rs is not linked.
+ fn wayland_clipboard_image() -> Option<(u32, u32, Vec<u8>)> {
+     use std::io::Read;
+     use wl_clipboard_rs::paste::{ClipboardType, MimeType, Seat, get_contents, get_mime_types_ordered};
+@@ -399,5 +399,11 @@
+     })
+ }
++// On X11 arboard handles the system clipboard, so Wayland fallback is not used.
++#[cfg(target_os = "linux")]
++fn wayland_clipboard_image() -> Option<(u32, u32, Vec<u8>)> {
++    None
++}
++
+ /// The first clipboard offer, in the source's order, that `fetch` returns as a decodable image,
+ /// upright as RGBA8. Only `image/*` types are fetched, so text offers are never transferred.
+ #[cfg(any(target_os = "linux", test))]
