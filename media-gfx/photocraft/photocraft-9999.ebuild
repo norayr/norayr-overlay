@@ -43,9 +43,21 @@ src_unpack() {
 	grep -q 'features = \["wayland-data-control"\]' "${manifest}" || die "clipboard dependency layout changed"
 	sed -i -e 's/features = \["wayland-data-control"\]/features = []/' \
 		-e '/^wl-clipboard-rs = /d' "${manifest}" || die
-	pushd "${S}" >/dev/null || die
-	eapply "${FILESDIR}/${PN}-x11-only.patch"
-	popd >/dev/null || die
+	# Do not depend on a brittle patch at fixed line numbers: upstream edits
+	# services.rs frequently. Keep its Wayland-only helper out of this build,
+	# and supply an X11 stub. The normal arboard clipboard path still works.
+	local services="${S}/apps/${PN}/src/services.rs"
+	[[ -f ${services} ]] || die "missing services.rs"
+	grep -Fq 'fn wayland_clipboard_image() -> Option<(u32, u32, Vec<u8>)> {' "${services}" || die "upstream clipboard helper changed"
+	sed -i '/^fn wayland_clipboard_image() -> Option<(u32, u32, Vec<u8>)> {/i #[cfg(any())]' "${services}" || die
+	cat >> "${services}" <<-'EOF' || die
+
+		// X11-only Gentoo build. On X11, arboard supplies clipboard images.
+		#[cfg(target_os = "linux")]
+		fn wayland_clipboard_image() -> Option<(u32, u32, Vec<u8>)> {
+		    None
+		}
+	EOF
 
 	cargo_live_src_unpack
 }
