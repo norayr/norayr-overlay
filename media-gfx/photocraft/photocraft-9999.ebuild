@@ -18,7 +18,6 @@ IUSE="+cli"
 RESTRICT="test"
 
 DEPEND="
-	dev-libs/wayland
 	media-libs/vulkan-loader
 	x11-libs/libX11
 	x11-libs/libXcursor
@@ -32,6 +31,22 @@ BDEPEND="dev-util/pkgconf"
 
 src_unpack() {
 	git-r3_src_unpack
+
+	# Only enable eframe's X11 window backend. Patch before cargo_live_src_unpack
+	# so Cargo can update the lockfile and vendor the correct dependency set.
+	local app_manifest="${S}/apps/${PN}/Cargo.toml"
+	[[ -f ${app_manifest} ]] || die "missing application Cargo.toml"
+	grep -Fq '"wayland", "x11"' "${app_manifest}" || die "upstream window backend features changed"
+	sed -i 's/"wayland", "x11"/"x11"/' "${app_manifest}" || die
+	# The extra Wayland clipboard integration is not required for X11.
+	local manifest="${S}/apps/${PN}/Cargo.toml"
+	grep -q 'features = \["wayland-data-control"\]' "${manifest}" || die "clipboard dependency layout changed"
+	sed -i -e 's/features = \["wayland-data-control"\]/features = []/' \
+		-e '/^wl-clipboard-rs = /d' "${manifest}" || die
+	pushd "${S}" >/dev/null || die
+	eapply "${FILESDIR}/${PN}-x11-only.patch"
+	popd >/dev/null || die
+
 	cargo_live_src_unpack
 }
 
