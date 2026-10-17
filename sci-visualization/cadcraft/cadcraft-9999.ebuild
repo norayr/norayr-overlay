@@ -14,7 +14,7 @@ EGIT_REPO_URI="https://github.com/storytold/${PN}.git"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
-IUSE="+cli"
+IUSE="+cli accessibility"
 RESTRICT="test"
 
 DEPEND="
@@ -39,6 +39,23 @@ src_unpack() {
 	[[ -f ${app_manifest} ]] || die "missing application Cargo.toml"
 	grep -Fq '"wayland", "x11"' "${app_manifest}" || die "upstream window backend features changed"
 	sed -i 's/"wayland", "x11"/"x11"/' "${app_manifest}" || die
+
+	# Disable the Linux AT-SPI / AccessKit integration unless explicitly requested.
+	# This removes accesskit_unix and its atspi-common dependency, without
+	# affecting the X11 window backend. Put this before cargo_live_src_unpack.
+	if ! use accessibility; then
+		grep -Fq '"accesskit"' "${app_manifest}" || die "upstream AccessKit features changed"
+		sed -i 's/"accesskit", //' "${app_manifest}" || die
+
+		# Cargo unifies crate features across the dependency graph. Some
+		# applications also enable AccessKit from their internal UI crate.
+		# Removing it only from the executable manifest is insufficient.
+		local ui_manifest="${S}/crates/ui-egui/Cargo.toml"
+		if [[ -f ${ui_manifest} ]] && grep -Fq '"accesskit"' "${ui_manifest}"; then
+			sed -i -e 's/"accesskit", //g' -e 's/, "accesskit"//g' \
+				"${ui_manifest}" || die
+		fi
+	fi
 
 	cargo_live_src_unpack
 }
