@@ -65,6 +65,25 @@ src_unpack() {
 	cp "${FILESDIR}/compositor_gpu-x11.rs" \
 		"${S}/apps/${PN}/src/compositor_gpu.rs" || die
 
+	# PDFCraft also probes Wayland decoration protocols in decorations.rs.
+	# On X11 the window manager draws the frame, so the probe is unnecessary.
+	# Keep the upstream app_drawn() logic, including PDFCRAFT_TITLEBAR=app,
+	# and replace only the Wayland-dependent tail of this module.
+	local decorations="${S}/apps/${PN}/src/decorations.rs"
+	[[ -f ${decorations} ]] || die "missing decorations.rs"
+	grep -Fq '/// Whether this is a Wayland session whose compositor draws no frames.' \
+		"${decorations}" || die "upstream decoration probe changed"
+	grep -Fq 'impl wayland_client::Dispatch<' "${decorations}" || \
+		die "upstream decoration implementation changed"
+	sed -i '/^\/\/\/ Whether this is a Wayland session whose compositor draws no frames\./,$d' \
+		"${decorations}" || die
+	cat >> "${decorations}" <<'EOF' || die
+/// X11 window managers draw their own window frames.
+fn compositor_leaves_frame_to_app() -> bool {
+    false
+}
+EOF
+
 	cargo_live_src_unpack
 }
 
