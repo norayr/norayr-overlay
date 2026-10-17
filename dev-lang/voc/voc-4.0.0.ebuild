@@ -13,15 +13,15 @@ S="${WORKDIR}/compiler-${PV}"
 LICENSE="GPL-3 LGPL-2 LGPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="+gcc clang tcc ocat +modular +network test X"
+IUSE="+gcc clang tcc ocat +modular +network +bindings test"
 REQUIRED_USE="
 	^^ ( gcc clang tcc )
-	X? ( modular )
+	bindings? ( modular )
 	modular? ( kernel_linux elibc_glibc )
 	network? ( kernel_linux )
 "
 
-DEPEND="X? ( x11-libs/libX11 )"
+DEPEND="bindings? ( x11-libs/libX11 )"
 RDEPEND="
 	${DEPEND}
 	!dev-oberon/lists
@@ -46,7 +46,7 @@ modular_make() {
 		VOC="${S}/voc" VOCROOT="${S}/install" VOCLIBDIR="${S}/install/lib" \
 		RESOURCE_ROOT=/usr/share/voc INSTALL_LIBDIR="/usr/$(get_libdir)" \
 		VOC_RUNPATH="\$\$ORIGIN:/usr/$(get_libdir)/voc/modular/2" \
-		WITH_X11="$(usex X 1 0)" WITH_CAIRO=0 WITH_RAYLIB=0 \
+		WITH_X11="$(usex bindings 1 0)" WITH_CAIRO=0 WITH_RAYLIB=0 \
 		WITH_NETWORK="$(usex network 1 0)" MODEL=2 "$@"
 }
 
@@ -75,7 +75,7 @@ src_compile() {
 
 	if use modular; then
 		modular_make libraries all
-		if use X && has_separate_bindings; then
+		if use bindings && has_separate_bindings; then
 			modular_make bindings
 		fi
 	fi
@@ -104,7 +104,7 @@ src_test() {
 		NETWORK="$(usex network 1 0)"
 	if use modular; then
 		modular_make test test-tools test-library demo
-		if use X && has_separate_bindings; then
+		if use bindings && has_separate_bindings; then
 			modular_make test-bindings
 		fi
 		modular_make demo HOST_MODE=mD
@@ -122,7 +122,7 @@ src_install() {
 
 	if use modular; then
 		local target=install-modular
-		if use X && has_separate_bindings; then
+		if use bindings && has_separate_bindings; then
 			target=install-modular-bindings
 		fi
 		modular_make "${target}" DESTDIR="${D}" \
