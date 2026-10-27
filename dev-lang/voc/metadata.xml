@@ -11,7 +11,8 @@
     <flag name="tcc">Use Tiny C as the C backend</flag>
     <flag name="ocat">Build the Oberon text-file conversion tool</flag>
     <flag name="modular">Build shared modules, hresh and its compiler, browser and editor (Linux with glibc)</flag>
-    <flag name="network">Build the Linux Internet, HTTP, TLS, HTTPS and Gemini libraries</flag>
+    <flag name="network">Build the Linux Internet, HTTP, TLS, HTTPS, Gemini and XMPP transport libraries and the xmpp-publish command</flag>
+    <flag name="bindings">Build the X11, Cairo and raylib shared bindings</flag>
   </use>
   <upstream>
     <remote-id type="github">vishapoberon/compiler</remote-id>
