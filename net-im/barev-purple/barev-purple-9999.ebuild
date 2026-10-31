@@ -24,6 +24,7 @@ BDEPEND="virtual/pkgconfig"
 DEPEND="
   dev-libs/glib:2
   dev-libs/libxml2
+  x11-libs/gdk-pixbuf:2[jpeg]
   gstreamer? (
     net-im/pidgin[gstreamer,v4l]
     media-libs/gstreamer:1.0
@@ -69,5 +70,4 @@ pkg_postinst() {
   elog
   elog "Take care!"
 }
-
 
