@@ -1,0 +1,12 @@
+diff --git a/makefile b/makefile
+--- a/makefile
++++ b/makefile
+@@ -221,8 +221,6 @@ all: configuration
+ 	@printf "\n\n--- Library build successfull ---\n\n"
+ 	@make -f src/tools/make/oberon.mk -s sourcechanges
+ 	@make -f src/tools/make/oberon.mk -s makeinstalldir
+-	@printf "\n\n--- Confidence tests started ---\n\n"
+-	@make -f src/tools/make/oberon.mk -s confidence MODEL=2
+ 	@make -f src/tools/make/oberon.mk -s instructions
+ 
+ 
