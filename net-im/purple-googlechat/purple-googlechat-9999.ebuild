@@ -15,7 +15,7 @@ KEYWORDS=""
 PROPERTIES="live"
 
 RDEPEND="
-	>=net-im/pidgin-2.14:0/2=
+	>=net-im/pidgin-2.14:0=
 	dev-libs/glib:2
 	dev-libs/json-glib
 	dev-libs/protobuf-c:=
