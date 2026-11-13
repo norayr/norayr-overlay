@@ -1,7 +1,7 @@
 diff --git a/makefile b/makefile
 --- a/makefile
 +++ b/makefile
-@@ -221,8 +221,6 @@ all: configuration
+@@ -223,8 +223,6 @@ all: configuration
  	@printf "\n\n--- Library build successfull ---\n\n"
  	@$(MAKE) -f src/tools/make/oberon.mk -s sourcechanges
  	@$(MAKE) -f src/tools/make/oberon.mk -s makeinstalldir

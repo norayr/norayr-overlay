@@ -10,9 +10,13 @@
     <flag name="clang">Use Clang as the C backend</flag>
     <flag name="tcc">Use Tiny C as the C backend</flag>
     <flag name="ocat">Build the Oberon text-file conversion tool</flag>
-    <flag name="modular">Build shared modules, hresh and its compiler, browser and editor (Linux with glibc)</flag>
-    <flag name="network">Build the Linux Internet, HTTP, TLS, HTTPS, Gemini and XMPP transport libraries and the xmpp-publish command</flag>
-    <flag name="bindings">Build the X11, Cairo and raylib shared bindings</flag>
+    <flag name="modular">Build shared modules, hresh and its compiler, browser, editor and bundled module libraries (Linux with glibc)</flag>
+    <flag name="network">Build the Linux Internet, HTTP, TLS, HTTPS, Gemini, IRC and XMPP transport libraries and the xmpp-publish command</flag>
+    <flag name="bindings">Build all native graphics bindings; this enables the X, cairo and raylib flags together</flag>
+    <flag name="X">Build the X11 bindings when the bindings flag is disabled</flag>
+    <flag name="cairo">Build the Cairo bindings when the bindings flag is disabled</flag>
+    <flag name="raylib">Build the raylib bindings when the bindings flag is disabled</flag>
+    <flag name="examples">Install the bundled example programs and their documentation</flag>
   </use>
   <upstream>
     <remote-id type="github">vishapoberon/compiler</remote-id>
