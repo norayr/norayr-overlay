@@ -13,7 +13,6 @@ S="${WORKDIR}/compiler-${PV}"
 
 LICENSE="
 	GPL-2 GPL-3 LGPL-2+ LGPL-2.1 LGPL-3 MPL-1.1 BSD MIT Unicode-3.0
-	all-rights-reserved
 "
 SLOT="0"
 KEYWORDS="~amd64"
