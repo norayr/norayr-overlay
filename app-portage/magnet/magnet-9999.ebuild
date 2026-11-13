@@ -3,8 +3,8 @@ EAPI=8
 inherit git-r3
 
 DESCRIPTION="Gentoo package and filesystem tools written in Free Pascal"
-HOMEPAGE="https://github.com/norayr/magenta"
-EGIT_REPO_URI="https://github.com/norayr/magenta.git"
+HOMEPAGE="https://github.com/norayr/magnet"
+EGIT_REPO_URI="https://github.com/norayr/magnet.git"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -27,6 +27,6 @@ src_test() {
 }
 
 src_install() {
-	dobin gnt-get gntpkg gntorphan gntfsorphan
+	dobin mgnt-get mgnt-pkg mgnt-orphan mgnt-fs-orphan
 	dodoc README.md
 }
