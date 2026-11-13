@@ -3,8 +3,8 @@ EAPI=8
 inherit git-r3
 
 DESCRIPTION="Gentoo package and filesystem tools written in Free Pascal"
-HOMEPAGE="https://github.com/norayr/gnt"
-EGIT_REPO_URI="https://github.com/norayr/gnt.git"
+HOMEPAGE="https://github.com/norayr/magenta"
+EGIT_REPO_URI="https://github.com/norayr/magenta.git"
 
 LICENSE="GPL-3"
 SLOT="0"
