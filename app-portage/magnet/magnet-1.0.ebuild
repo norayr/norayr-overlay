@@ -27,6 +27,6 @@ src_test() {
 }
 
 src_install() {
-	dobin mgnt-get mgnt-pkg mgnt-orphan mgnt-fs-orphan
+	dobin mgnt-get mgnt-attract mgnt-repel mgnt-pkg mgnt-orphan mgnt-fs-orphan
 	dodoc README.md
 }
