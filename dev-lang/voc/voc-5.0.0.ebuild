@@ -25,7 +25,7 @@ REQUIRED_USE="
 	modular? ( kernel_linux elibc_glibc )
 	network? ( kernel_linux )
 "
-# Imported XMPP and HALD CLUT licensing is unresolved; retain the source records and notices.
+# Imported XMPP licensing is unresolved; retain the source records and notices.
 RESTRICT="mirror bindist !test? ( test )"
 
 DEPEND="
@@ -243,5 +243,5 @@ pkg_postinst() {
 	if use tcc; then
 		ewarn "TCC can emit ELF text relocations and omit GNU-stack metadata; prefer GCC or Clang for hardened builds."
 	fi
-	ewarn "Bundled XMPP and HALD CLUT licensing remains unconfirmed; consult the installed source records before redistribution."
+	ewarn "Bundled XMPP licensing remains unconfirmed; consult the installed source records before redistribution."
 }
