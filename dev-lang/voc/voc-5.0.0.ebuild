@@ -70,7 +70,7 @@ pkg_setup() {
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/${P}-optional-tests.patch"
+	eapply "${FILESDIR}/${PN}-5.0.0-optional-tests.patch"
 }
 
 use_bindings() {
