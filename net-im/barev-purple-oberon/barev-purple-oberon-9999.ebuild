@@ -14,13 +14,14 @@ EGIT_BRANCH="main"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS=""
-IUSE="test"
+IUSE="+gtk test"
 # The privately linked VOC archive includes XMPP code with unconfirmed licensing.
 RESTRICT="mirror bindist !test? ( test )"
 
 DEPEND="
 	dev-libs/glib:2
 	net-im/pidgin:0
+	gtk? ( x11-libs/gtk+:2 )
 "
 RDEPEND="
 	${DEPEND}
@@ -48,6 +49,7 @@ src_configure() {
 
 barev_make() {
 	emake CC="${CC}" PKG_CONFIG="${PKG_CONFIG}" PYTHON="${PYTHON}" \
+		PIDGIN_UI="$(usex gtk 1 0)" \
 		CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}" \
 		PLUGINDIR="${EPREFIX}/usr/$(get_libdir)/purple-2" \
 		DATADIR="${EPREFIX}/usr/share" "$@"
@@ -78,6 +80,7 @@ pkg_postinst() {
 	elog "Back up your profile before testing. Exchange and verify Ed25519 keys,"
 	elog "pin each other's key through Peer identity, then reconnect both accounts."
 	elog "Pinned connections require mutual TLS 1.3 and SASL EXTERNAL; unpinned contacts use legacy transport."
+	use gtk && elog "The conversation information pane shows a lock only for a live authenticated peer connection."
 	elog "The default messaging port is TCP 1337; file transfers use TCP 50000-50049."
 	elog "Listeners bind to the selected local Yggdrasil address."
 	elog "Use Insert -> Image in a conversation to send PNG/JPEG pictures."

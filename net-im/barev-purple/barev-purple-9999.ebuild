@@ -14,7 +14,7 @@ EGIT_BRANCH="main"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS=""
-IUSE="gstreamer test"
+IUSE="gstreamer +gtk test"
 RESTRICT="!test? ( test )"
 
 # Needs pkg-config for plugindir/datadir lookups and for cflags/libs
@@ -35,6 +35,7 @@ DEPEND="
   dev-libs/libxml2
   >=dev-libs/openssl-1.1.1:0=
   x11-libs/gdk-pixbuf:2[jpeg]
+  gtk? ( x11-libs/gtk+:2 )
   gstreamer? (
     net-im/pidgin[gstreamer,v4l]
     media-libs/gstreamer:1.0
@@ -65,6 +66,7 @@ RDEPEND="
 barev_make() {
   emake \
     CC="$(tc-getCC)" \
+    PIDGIN_UI=$(usex gtk 1 0) \
     USE_VV=$(usex gstreamer 1 0) "$@"
 }
 
@@ -77,7 +79,7 @@ src_test() {
   export GST_REGISTRY_1_0="${T}/gstreamer-registry.bin"
   barev_make PYTHON="${PYTHON}" \
     test-identities test-peer-pins test-parser test-addresses test-images \
-    test-formatting test-avatar-cache test-tls test-auth-stream test-auth-protocol
+    test-formatting test-avatar-cache test-tls test-auth-stream test-auth-protocol test-security-ui
 }
 
 src_install() {
@@ -105,6 +107,7 @@ pkg_postinst() {
   elog "Back up your profile, verify and pin each other's Ed25519 key,"
   elog "then reconnect both accounts to require mutual TLS 1.3 and SASL EXTERNAL."
   elog "Unpinned contacts retain legacy transport without identity authentication."
+  use gtk && elog "The conversation information pane shows a lock only for a live authenticated peer connection."
   elog
   elog "Take care!"
 }
