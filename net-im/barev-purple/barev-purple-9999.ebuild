@@ -107,7 +107,7 @@ pkg_postinst() {
   elog "Back up your profile, verify and pin each other's Ed25519 key,"
   elog "then reconnect both accounts to require mutual TLS 1.3 and SASL EXTERNAL."
   elog "Unpinned contacts retain legacy transport without identity authentication."
-  use gtk && elog "The conversation information pane shows a lock only for a live authenticated peer connection."
+  use gtk && elog "The conversation information pane shows a shield for authenticated peers; hover for details."
   elog
   elog "Take care!"
 }

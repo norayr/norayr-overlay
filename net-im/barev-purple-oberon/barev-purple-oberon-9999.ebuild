@@ -80,7 +80,7 @@ pkg_postinst() {
 	elog "Back up your profile before testing. Exchange and verify Ed25519 keys,"
 	elog "pin each other's key through Peer identity, then reconnect both accounts."
 	elog "Pinned connections require mutual TLS 1.3 and SASL EXTERNAL; unpinned contacts use legacy transport."
-	use gtk && elog "The conversation information pane shows a lock only for a live authenticated peer connection."
+	use gtk && elog "The conversation information pane shows a shield for authenticated peers; hover for details."
 	elog "The default messaging port is TCP 1337; file transfers use TCP 50000-50049."
 	elog "Listeners bind to the selected local Yggdrasil address."
 	elog "Use Insert -> Image in a conversation to send PNG/JPEG pictures."
