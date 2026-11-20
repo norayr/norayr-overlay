@@ -3,8 +3,8 @@ EAPI=8
 inherit desktop git-r3 xdg
 
 DESCRIPTION="HexChat-style IRC client written in Free Pascal and Lazarus"
-HOMEPAGE="https://github.com/Aruna-Hewapathirane/HexChat-Clone"
-EGIT_REPO_URI="https://github.com/Aruna-Hewapathirane/HexChat-Clone.git"
+HOMEPAGE="https://github.com/Aruna-Hewapathirane/hexchatclone2"
+EGIT_REPO_URI="https://github.com/Aruna-Hewapathirane/hexchatclone2"
 EGIT_BRANCH="main"
 
 LICENSE="MIT"
