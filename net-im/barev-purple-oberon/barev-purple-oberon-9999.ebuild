@@ -19,7 +19,7 @@ IUSE="+gtk test"
 RESTRICT="mirror bindist !test? ( test )"
 
 DEPEND="
-	dev-libs/glib:2
+	>=dev-libs/glib-2.54:2
 	net-im/pidgin:0
 	gtk? ( x11-libs/gtk+:2 )
 "
@@ -32,7 +32,10 @@ BDEPEND="
 	>=dev-build/make-4.3
 	>=dev-lang/voc-5.3.0[network]
 	virtual/pkgconfig
-	test? ( $(python_gen_any_dep 'dev-python/cryptography[${PYTHON_USEDEP}]') )
+	test? (
+		sys-apps/dbus
+		$(python_gen_any_dep 'dev-python/cryptography[${PYTHON_USEDEP}]')
+	)
 "
 
 python_check_deps() {
@@ -63,12 +66,15 @@ src_test() {
 	# Keep libpurple's optional media probing away from host devices.
 	export GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0=""
 	export GST_REGISTRY_1_0="${T}/gstreamer-registry.bin"
-	barev_make test protocol-test protocol-address-test tls-test auth-test auth-protocol-test
+	barev_make test protocol-test protocol-address-test tls-test auth-test \
+		auth-protocol-test dbus-plugin-test dbus-publishing-plugin-test
 }
 
 src_install() {
 	barev_make DESTDIR="${D}" install
-	dodoc addresses.md identity.md images.md changes.md testing.md
+	dodoc addresses.md identity.md images.md changes.md testing.md dbus.md \
+		posts.md post-snapshots.md publishing.md publishing-accounts.md \
+		post-io.md post-async.md
 }
 
 pkg_postinst() {
@@ -87,6 +93,9 @@ pkg_postinst() {
 	elog "Picture processing uses VOC's native codecs and memory-only files."
 	elog "Large pictures offer Fit for chat, Send original, or Cancel."
 	elog "Advanced account settings control resizing and automatic image acceptance."
+	elog "For Insert Image, disable Colorize on the sender and disable Conversation Colors'"
+	elog "Ignore incoming format option on the receiver. See images.md for details."
+	elog "The local D-Bus publishing interface is described in dbus.md."
 	elog "If C Barev is enabled at the same time, give the accounts different local ports."
 	elog "Remove or move any manually installed ~/.purple/plugins/libvoc-barev.so"
 	elog "before starting Pidgin, so it loads the packaged plugin."
