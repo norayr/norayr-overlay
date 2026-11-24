@@ -19,9 +19,10 @@ RESTRICT="!test? ( test )"
 
 # Needs pkg-config for plugindir/datadir lookups and for cflags/libs
 BDEPEND="
+  ${PYTHON_DEPS}
   virtual/pkgconfig
   test? (
-    ${PYTHON_DEPS}
+    sys-apps/dbus
     $(python_gen_any_dep 'dev-python/cryptography[${PYTHON_USEDEP}]')
   )
 "
@@ -31,7 +32,7 @@ BDEPEND="
 # voice/video support, otherwise the calling UI (Conversation menu items,
 # call windows) is not present and our media caps go nowhere.
 DEPEND="
-  dev-libs/glib:2
+  >=dev-libs/glib-2.54:2
   dev-libs/libxml2
   >=dev-libs/openssl-1.1.1:0=
   x11-libs/gdk-pixbuf:2[jpeg]
@@ -46,9 +47,7 @@ DEPEND="
 "
 
 pkg_setup() {
-  if use test; then
-    python_setup
-  fi
+  python_setup
 }
 
 python_check_deps() {
@@ -65,7 +64,7 @@ RDEPEND="
 
 barev_make() {
   emake \
-    CC="$(tc-getCC)" \
+    CC="$(tc-getCC)" PYTHON="${PYTHON}" \
     PIDGIN_UI=$(usex gtk 1 0) \
     USE_VV=$(usex gstreamer 1 0) "$@"
 }
@@ -79,7 +78,9 @@ src_test() {
   export GST_REGISTRY_1_0="${T}/gstreamer-registry.bin"
   barev_make PYTHON="${PYTHON}" \
     test-identities test-peer-pins test-parser test-addresses test-images \
-    test-formatting test-avatar-cache test-tls test-auth-stream test-auth-protocol test-security-ui
+    test-formatting test-avatar-cache test-tls test-auth-stream test-auth-protocol \
+    test-security-ui test-account-close test-feed-access test-post-store \
+    test-post-io test-post-async test-dbus test-dbus-publishing test-dbus-plugin
 }
 
 src_install() {
@@ -88,7 +89,8 @@ src_install() {
   if [[ -e "${ED}"/usr/$(get_libdir)/purple-2/libbarev.so ]]; then
     fperms 0755 /usr/$(get_libdir)/purple-2/libbarev.so
   fi
-  dodoc readme.md identity.md images.md
+  dodoc readme.md CHANGELOG.md identity.md images.md dbus.md \
+    feed-access.md post-store.md post-io.md post-async.md
 }
 
 pkg_postinst() {
@@ -108,6 +110,10 @@ pkg_postinst() {
   elog "then reconnect both accounts to require mutual TLS 1.3 and SASL EXTERNAL."
   elog "Unpinned contacts retain legacy transport without identity authentication."
   use gtk && elog "The conversation information pane shows a shield for authenticated peers; hover for details."
+  elog "For Insert Image, disable Colorize on the sender and disable Conversation Colors'"
+  elog "Ignore incoming format option on the receiver. See images.md for details."
+  elog "Remove or move any manually installed ~/.purple/plugins/libbarev.so"
+  elog "before starting Pidgin, so it loads the packaged plugin."
   elog
   elog "Take care!"
 }
