@@ -44,8 +44,9 @@ DEPEND="${RDEPEND}"
 BDEPEND="virtual/pkgconfig"
 
 src_unpack() {
-	git-r3_src_unpack
-	cargo_live_src_unpack
+    git-r3_src_unpack
+    cd "${S}" || die
+    cargo_live_src_unpack
 }
 
 src_configure() {
