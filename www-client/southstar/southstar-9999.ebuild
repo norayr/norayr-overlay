@@ -18,7 +18,7 @@ KEYWORDS=""
 RESTRICT="test"
 
 RDEPEND="
-	>=x11-libs/gtk+-4.14:4
+	>=gui-libs/gtk-4.14:4
 	>=dev-libs/glib-2.80:2
 	>=x11-libs/cairo-1.18
 	>=media-libs/harfbuzz-8.3
