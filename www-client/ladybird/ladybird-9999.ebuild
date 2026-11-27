@@ -17,16 +17,21 @@ EGIT_BRANCH="master"
 LICENSE="BSD-2 BSD MIT Apache-2.0 LGPL-2.1+ MPL-2.0 ISC ZLIB FTL Unicode-3.0"
 SLOT="0"
 KEYWORDS=""
+IUSE="pulseaudio"
 RESTRICT="test network-sandbox"
 
 RDEPEND="
-	>=dev-qt/qtbase-6.10:6[gui,widgets,network,dbus,X,wayland]
+	>=dev-qt/qtbase-6.10:6[gui,widgets,network,dbus,X]
 	>=dev-qt/qtpositioning-6.10:6
 	dev-libs/glib:2
-	dev-libs/wayland
 	media-libs/fontconfig
 	media-libs/libglvnd
-	media-libs/libpulse
+	pulseaudio? (
+		|| (
+			media-libs/libpulse
+			media-sound/apulse[sdk]
+		)
+	)
 	x11-libs/libdrm
 	x11-libs/libxcb
 	x11-libs/xcb-util-wm
@@ -63,6 +68,11 @@ pkg_setup() {
 
 src_prepare() {
 	default
+
+	if ! use pulseaudio; then
+		sed -i 's/pkg_check_modules(PULSEAUDIO IMPORTED_TARGET libpulse)/set(PULSEAUDIO_FOUND FALSE)/' \
+			Meta/CMake/audio.cmake || die
+	fi
 
 	# The upstream build driver configures CMake using the Release preset.
 	# Keep bundled libraries in a private directory rather than /usr/lib*.
